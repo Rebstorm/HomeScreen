@@ -1,7 +1,6 @@
 package jacks.paul.homescreen.fragments;
 
-import android.app.Activity;
-import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -9,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import jacks.paul.homescreen.R;
+import jacks.paul.homescreen.download.DownloadWeather;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -20,10 +20,8 @@ import jacks.paul.homescreen.R;
  */
 public class HomeFragment extends Fragment {
 
-
-
     public HomeFragment() {
-        // Required empty public constructor
+
     }
 
     @Override
@@ -38,12 +36,18 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
+        getWeatherXML();
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
 
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
+    private void getWeatherXML() {
+
+        new DownloadWeather().execute("whatever");
+
+
     }
 
+
 }
+
