@@ -3,9 +3,11 @@ package jacks.paul.homescreen;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.view.Gravity;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -30,15 +32,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     //Fragment Manager
     FragmentManager fragmentManager;
 
+    // NavDrawer
+    DrawerLayout drawer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         // Toolbar
+        /*
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        This should be out. 
 
+        */
 
 
         // Music Fragment
@@ -49,22 +57,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_main, homeFragment).commit();
 
-        /*
+         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
+        // TODO: Fix this so it looks decent.
+        fab.setBackgroundTintList(ColorStateList.valueOf(0));
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                drawer.openDrawer(GravityCompat.START);
             }
         });
-        */
 
-        // NavDrawer
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
+
+        //ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        //drawer.setDrawerListener();
+        //toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -121,11 +132,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         if (id == R.id.nav_music) {
-
             fragmentManager.beginTransaction().replace(R.id.content_main, musicFragment).commit();
 
-
-
+        } else if (id == R.id.nav_home) {
+            fragmentManager.beginTransaction().replace(R.id.content_main, homeFragment).commit();
         } else if (id == R.id.nav_gallery) {
             Toast.makeText(getApplication(), "asd", Toast.LENGTH_LONG).show();
         } else if (id == R.id.nav_slideshow) {
