@@ -25,6 +25,14 @@ import java.net.URL;
  * Created by Paul on 2015-10-08.
  */
 public class DownloadWeather extends AsyncTask<String, Void, String> {
+
+
+    public String xmlData = "Failed";
+
+    public DownloadInterface delegate = null;
+
+
+
     @Override
     protected String doInBackground(String... urls) {
         InputStream is = null;
@@ -32,9 +40,9 @@ public class DownloadWeather extends AsyncTask<String, Void, String> {
         // web page content.
         int len = 500;
 
-        String contentAsString = "Failed";
+
         try {
-            URL url = new URL("http://api.yr.no/weatherapi/locationforecast/1.9/?lat=60.10;lon=9.58;msl=70");
+            URL url = new URL(urls[0]);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setReadTimeout(10000 /* milliseconds */);
             conn.setConnectTimeout(15000 /* milliseconds */);
@@ -43,12 +51,13 @@ public class DownloadWeather extends AsyncTask<String, Void, String> {
             // Starts the query
             conn.connect();
             int response = conn.getResponseCode();
-            Log.d("DATA", "The response is: " + response);
             is = conn.getInputStream();
 
             // Convert the InputStream into a string
-            contentAsString = readIt(is, len);
-            return contentAsString;
+            xmlData = readIt(is, len);
+            delegate.processFinished(xmlData);
+
+            return xmlData;
 
             // Makes sure that the InputStream is closed after the app is
             // finished using it.
@@ -68,7 +77,8 @@ public class DownloadWeather extends AsyncTask<String, Void, String> {
                 }
             }
         }
-        return contentAsString;
+
+        return xmlData;
     }
 
     @Override

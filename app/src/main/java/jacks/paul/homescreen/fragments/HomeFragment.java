@@ -6,9 +6,12 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import jacks.paul.homescreen.R;
+import jacks.paul.homescreen.download.DownloadInterface;
 import jacks.paul.homescreen.download.DownloadWeather;
+import jacks.paul.homescreen.parsing.XMLParser;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -18,8 +21,13 @@ import jacks.paul.homescreen.download.DownloadWeather;
  * Use the {@link HomeFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements DownloadInterface {
 
+    public DownloadInterface response;
+    DownloadWeather task = new DownloadWeather();
+
+
+    // Why must I never use these? Thats sad. I like constructors.
     public HomeFragment() {
 
     }
@@ -27,9 +35,9 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
 
-        }
+        task.delegate = this;
+
     }
 
     @Override
@@ -37,17 +45,21 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
+
+
         getWeatherXML();
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
 
     private void getWeatherXML() {
-
-        new DownloadWeather().execute("whatever");
-
+        task.execute("http://api.yr.no/weatherapi/locationforecast/1.9/?lat=60.10;lon=9.58;msl=70");
 
     }
 
 
+    @Override
+    public void processFinished(String output) {
+        XMLParser xml = new XMLParser(output);
+    }
 }
 
