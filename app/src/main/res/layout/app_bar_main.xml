@@ -21,7 +21,16 @@
     <include layout="@layout/fragment_contenter" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+        android:id="@+id/fabRefresh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|end"
+        android:layout_marginRight="@dimen/fab_margin"
+        android:layout_marginTop="@dimen/fab_refresh_margin_top"
+        android:src="@android:drawable/ic_menu_rotate" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabMenu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"

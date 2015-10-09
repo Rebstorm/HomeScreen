@@ -2,6 +2,7 @@ package jacks.paul.homescreen.fragments;
 
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.design.widget.FloatingActionButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,6 +54,7 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
         View v = inflater.inflate(R.layout.fragment_home, container, false);
 
         homeText = (TextView)v.findViewById(R.id.home_text);
+
 
         task.execute("http://api.yr.no/weatherapi/locationforecast/1.9/?lat=50.9;lon=6.9");
 

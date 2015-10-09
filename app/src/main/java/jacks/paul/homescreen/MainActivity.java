@@ -58,9 +58,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
          drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabMenu);
 
-        // TODO: Fix this so it looks decent.
+       // TODO: Fix this so it looks decent.
         fab.setBackgroundTintList(ColorStateList.valueOf(0));
 
         fab.setOnClickListener(new View.OnClickListener() {
