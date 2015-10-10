@@ -24,11 +24,23 @@
         android:textSize="@dimen/home_text_size"
         />
     <TextView
+        android:id="@+id/home_text_desc"
         android:layout_width="fill_parent"
         android:layout_height="100dp"
         android:layout_below="@+id/home_text"
         android:text="Information regarding the weather."
         android:textColor="@android:color/white"
         android:layout_toRightOf="@+id/weatherImage"/>
+
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabRefresh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/home_text_desc"
+        android:layout_alignParentRight="true"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@android:drawable/ic_menu_rotate" />
+
 
 </RelativeLayout>

@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import jacks.paul.homescreen.R;
 import jacks.paul.homescreen.download.DownloadInterface;
@@ -26,12 +27,13 @@ import jacks.paul.homescreen.types.TemperatureData;
 public class HomeFragment extends Fragment implements DownloadInterface, WeatherInterface {
 
     public DownloadInterface response;
-    DownloadWeather task = new DownloadWeather();
+   // DownloadWeather task = new DownloadWeather();
     ParseWeather xml = new ParseWeather();
 
 
     //UI
     TextView homeText;
+    FloatingActionButton fabRefresh;
 
     public HomeFragment() {
         // Why dont I never use these? Thats sad. I like constructors.
@@ -41,7 +43,7 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        task.delegate = this;
+       // task.delegate = this;
         xml.delegate = this;
 
     }
@@ -50,13 +52,21 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-
         View v = inflater.inflate(R.layout.fragment_home, container, false);
 
         homeText = (TextView)v.findViewById(R.id.home_text);
+        fabRefresh = (FloatingActionButton)v.findViewById(R.id.fabRefresh);
 
+        fabRefresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getActivity(), "Updating weather information..", Toast.LENGTH_LONG).show();
+                getWeatherInformation("http://api.yr.no/weatherapi/locationforecast/1.9/?lat=50.9;lon=6.9");
+            }
+        });
 
-        task.execute("http://api.yr.no/weatherapi/locationforecast/1.9/?lat=50.9;lon=6.9");
+        // Update UI
+        getWeatherInformation("http://api.yr.no/weatherapi/locationforecast/1.9/?lat=50.9;lon=6.9");
 
         return v;
     }
@@ -66,7 +76,6 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
     @Override
     public void processFinished(String output) {
         xml.getWeather(output);
-
     }
 
     @Override
@@ -76,12 +85,21 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                homeText.setText(String.valueOf(data.temperature));
+                homeText.setText(String.valueOf(data.temperature + "°C - Home(outside)"));
             }
         });
-
     }
 
+    void getWeatherInformation(String xmlURL){
+
+
+        // This is fucking dirty, but since AsyncTasks can only be run once, you always
+        // have to make it new for each time. Which means I have to redefine the delegate/interface
+        DownloadWeather task = new DownloadWeather();
+        task.delegate = this;
+        task.execute(xmlURL);
+
+    }
 
 
 
