@@ -7,7 +7,7 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">24dp</dimen>
     <dimen name="fab_refresh_margin_top">150dp</dimen>
-    <dimen name="fab_refrsh_margin_left">300dp</dimen>
+    <dimen name="fab_refresh_bottom">80dp</dimen>
     <dimen name="home_text_size">24sp</dimen>
     <dimen name="fab_margin_fragment">7dp</dimen>
 </resources>

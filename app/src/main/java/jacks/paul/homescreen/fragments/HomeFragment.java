@@ -1,8 +1,6 @@
 package jacks.paul.homescreen.fragments;
 
-import android.app.Dialog;
 import android.content.res.ColorStateList;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.design.widget.FloatingActionButton;
@@ -10,9 +8,16 @@ import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.HorizontalScrollView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import jacks.paul.homescreen.R;
 import jacks.paul.homescreen.adapters.LoadingDialogue;
@@ -36,15 +41,31 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
    // DownloadWeather task = new DownloadWeather();
     ParseWeather xml = new ParseWeather();
 
+    HorizontalScrollView noteList;
+
+    LinearLayout noteItems;
+
+    static final String[] numbers = new String[] {
+            "A", "B", "C", "D", "E",
+            "F", "G", "H", "I", "J",
+            "K", "L", "M", "N", "O",
+            "P", "Q", "R", "S", "T",
+            "U", "V", "W", "X", "Y", "Z"};
 
     //UI
     TextView homeText;
     TextView homeTextDesc;
+    TextView dateText;
+
     ImageView weatherImg;
+
+    // FAB
     FloatingActionButton fabRefresh;
 
     //Overlay
     LoadingDialogue loadWindow;
+
+
 
     public HomeFragment() {
         // Why dont I never use these? Thats sad. I like constructors.
@@ -68,10 +89,40 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
         homeText = (TextView)v.findViewById(R.id.home_text);
         homeTextDesc = (TextView)v.findViewById(R.id.home_text_desc);
 
-        weatherImg = (ImageView)v.findViewById(R.id.weatherImage);
+        weatherImg = (ImageView) v.findViewById(R.id.weatherImage);
 
         fabRefresh = (FloatingActionButton)v.findViewById(R.id.fabRefresh);
         fabRefresh.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(getActivity(), R.color.gray)));
+
+        noteList = (HorizontalScrollView)v.findViewById(R.id.noteScroller);
+
+        noteItems = (LinearLayout)v.findViewById(R.id.scroll_items);
+
+        // TODO: Only for testing!
+        noteItems.addView(new ImageButton(getActivity()));
+        noteItems.addView(new ImageButton(getActivity()));
+        noteItems.addView(new ImageButton(getActivity()));
+        noteItems.addView(new ImageButton(getActivity()));
+        noteItems.addView(new ImageButton(getActivity()));
+        noteItems.addView(new ImageButton(getActivity()));
+        noteItems.addView(new ImageButton(getActivity()));
+        noteItems.addView(new ImageButton(getActivity()));
+        noteItems.addView(new ImageButton(getActivity()));
+        noteItems.addView(new ImageButton(getActivity()));
+        noteItems.addView(new ImageButton(getActivity()));
+        noteItems.addView(new ImageButton(getActivity()));
+        noteItems.addView(new ImageButton(getActivity()));
+        noteItems.addView(new ImageButton(getActivity()));
+        noteItems.addView(new ImageButton(getActivity()));
+        noteItems.addView(new ImageButton(getActivity()));
+        noteItems.addView(new ImageButton(getActivity()));
+        noteItems.addView(new ImageButton(getActivity()));
+        noteItems.addView(new ImageButton(getActivity()));
+        noteItems.addView(new ImageButton(getActivity()));
+
+
+
+        dateText = (TextView)v.findViewById(R.id.date_text);
 
         loadWindow = new LoadingDialogue(getActivity());
 
@@ -86,12 +137,13 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
                 loadWindow.open();
 
 
-
             }
         });
 
         // Update UI
         getWeatherInformation("http://api.yr.no/weatherapi/locationforecast/1.9/?lat=50.9;lon=6.9");
+        getDate();
+
 
         return v;
     }
@@ -131,6 +183,13 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
 
     }
 
+    private void getDate(){
+
+        DateFormat dateNow = new SimpleDateFormat("EEE, dd/MM - yyyy");
+        Date currentTime = new Date();
+
+        dateText.setText(dateNow.format(currentTime));
+    }
 
     // Sets weather icon
     private void setWeatherIcon(TemperatureData.WeatherIcon weatherIcon) {
