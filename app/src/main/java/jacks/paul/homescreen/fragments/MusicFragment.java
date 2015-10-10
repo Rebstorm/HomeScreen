@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 
 import jacks.paul.homescreen.R;
+import jacks.paul.homescreen.adapters.WebStayView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -32,11 +33,18 @@ public class MusicFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        View v = inflater.inflate(R.layout.fragment_music, container, false);
+        spotifyPlayer = (WebView)v.findViewById(R.id.spotifyWeb);
+        // In order to make the view stay in the app
+        spotifyPlayer.setWebViewClient(new WebStayView());
+        runWebSettings();
 
-        spotifyPlayer = (WebView)container.findViewById(R.id.spotifyWeb);
-        //spotifyPlayer.loadUrl("http://google.com");
-        return inflater.inflate(R.layout.fragment_music, container, false);
+        return v;
 
+    }
+
+    private void runWebSettings() {
+        spotifyPlayer.loadUrl("http://google.com");
     }
 
 

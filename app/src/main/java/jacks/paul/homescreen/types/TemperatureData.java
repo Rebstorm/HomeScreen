@@ -18,9 +18,9 @@ public class TemperatureData {
 
     public double temperature = 0.0;
     public WeatherIcon weatherIcon = WeatherIcon.Thunderstorm;
-    public String WindDirection = "ERROR";
-    public String WindSpeed = "N/A";
-    public double Humidity = 0.0;
+    public String windDirection = "ERROR";
+    public String windSpeed = "N/A";
+    public double humidity = 0.0;
 
 
 }

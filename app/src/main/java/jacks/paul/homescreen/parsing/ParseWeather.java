@@ -50,7 +50,7 @@ public class ParseWeather {
             NodeList weatherDataNodes = xmlDoc.getElementsByTagName("location");
 
 
-
+            // Pulls weather data
             Node node = weatherDataNodes.item(0);
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
                     Element elements = (Element) node;
@@ -59,11 +59,128 @@ public class ParseWeather {
                      Looks like this:
                      <temperature id="TTT" unit="celsius" value="14.0"/>
                     */
-                    if(elements.getElementsByTagName("temperature").item(0).getAttributes().item(2).getTextContent() != null)
-                        data.temperature = Double.parseDouble(elements.getElementsByTagName("temperature").item(0).getAttributes().item(2).getTextContent());
+
+                    data.temperature = Double.parseDouble(elements.getElementsByTagName("temperature").item(0).getAttributes().item(2).getTextContent());
+
+                    /*Wind Direciton
+                    Looks like this:
+                    <windDirection id="dd" deg="52.3" name="NE"/>
+                     */
+                    data.windDirection = elements.getElementsByTagName("windDirection").item(0).getAttributes().item(1).getTextContent() + " " +
+                                             elements.getElementsByTagName("windDirection").item(0).getAttributes().item(2).getTextContent();
 
                 }
 
+            // YR.no does not tell you the symbol id for the current hour, so we will use the last hour.
+            Node symbolId = weatherDataNodes.item(1);
+                if (symbolId.getNodeType() == Node.ELEMENT_NODE) {
+                    Element elements = (Element) symbolId;
+
+                    /* Gets the symbol-id
+                     Looks like this:
+                     <symbol id="PartlyCloud" number="3"/>
+                     */
+                    int id = Integer.valueOf(elements.getElementsByTagName("symbol").item(0).getAttributes().item(1).getTextContent());
+
+                    switch (id){
+                        case 1:
+                            data.weatherIcon = TemperatureData.WeatherIcon.Sunny;
+                            break;
+                        case 2:
+                            data.weatherIcon = TemperatureData.WeatherIcon.Mostly_Cloudy;
+                            break;
+                        case 3:
+                            data.weatherIcon = TemperatureData.WeatherIcon.Cloudy;
+                            break;
+                        case 4:
+                            data.weatherIcon = TemperatureData.WeatherIcon.Cloudy;
+                            break;
+                        case 5:
+                            data.weatherIcon = TemperatureData.WeatherIcon.Slight_Drizzle;
+                            break;
+                        case 6:
+                            data.weatherIcon = TemperatureData.WeatherIcon.Thunderstorm;
+                            break;
+                        case 7:
+                            data.weatherIcon = TemperatureData.WeatherIcon.Sunny;
+                            break;
+                        case 8:
+                            data.weatherIcon = TemperatureData.WeatherIcon.Snow;
+                            break;
+                        case 9:
+                            data.weatherIcon = TemperatureData.WeatherIcon.Rain;
+                            break;
+                        case 10:
+                            data.weatherIcon = TemperatureData.WeatherIcon.Rain;
+                            break;
+                        case 11:
+                            data.weatherIcon = TemperatureData.WeatherIcon.Thunderstorm;
+                            break;
+                        case 12:
+                            data.weatherIcon = TemperatureData.WeatherIcon.Rain;
+                            break;
+                        case 13:
+                            data.weatherIcon = TemperatureData.WeatherIcon.Snow;
+                            break;
+                        case 14:
+                            data.weatherIcon = TemperatureData.WeatherIcon.Thunderstorm;
+                            break;
+                        case 15:
+                            data.weatherIcon = TemperatureData.WeatherIcon.Haze;
+                            break;
+
+                        default:
+                            data.weatherIcon = TemperatureData.WeatherIcon.Cloudy;
+                            break;
+
+
+                        /* LIST OF WEATHER ON YR.NO
+                        1 Sun
+                        2 LightCloud
+                        3 PartlyCloud
+                        4 Cloud
+                        5 LightRainSun
+                        6 LightRainThunderSun
+                        7 SleetSun
+                        8 SnowSun
+                        9 LightRain
+                        10 Rain
+                        11 RainThunder
+                        12 Sleet
+                        13 Snow
+                        14 SnowThunder
+                        15 Fog
+                        20 SleetSunThunder
+                        21 SnowSunThunder
+                        22 LightRainThunder
+                        23 SleetThunder
+                        24 DrizzleThunderSun
+                        25 RainThunderSun
+                        26 LightSleetThunderSun
+                        27 HeavySleetThunderSun
+                        28 LightSnowThunderSun
+                        29 HeavySnowThunderSun
+                        30 DrizzleThunder
+                        31 LightSleetThunder
+                        32 HeavySleetThunder
+                        33 LightSnowThunder
+                        34 HeavySnowThunder
+                        40 DrizzleSun
+                        41 RainSun
+                        42 LightSleetSun
+                        43 HeavySleetSun
+                        44 LightSnowSun
+                        45 HeavysnowSun
+                        46 Drizzle
+                        47 LightSleet
+                        48 HeavySleet
+                        49 LightSnow
+                        50 HeavySnow
+
+                         */
+
+                    }
+                }
 
             delegate.dataReceived(data);
 

@@ -1,11 +1,15 @@
 package jacks.paul.homescreen.fragments;
 
+import android.content.res.ColorStateList;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,6 +37,8 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
 
     //UI
     TextView homeText;
+    TextView homeTextDesc;
+    ImageView weatherImg;
     FloatingActionButton fabRefresh;
 
     public HomeFragment() {
@@ -55,7 +61,12 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
         View v = inflater.inflate(R.layout.fragment_home, container, false);
 
         homeText = (TextView)v.findViewById(R.id.home_text);
+        homeTextDesc = (TextView)v.findViewById(R.id.home_text_desc);
+
+        weatherImg = (ImageView)v.findViewById(R.id.weatherImage);
+
         fabRefresh = (FloatingActionButton)v.findViewById(R.id.fabRefresh);
+        fabRefresh.setBackgroundTintList(ColorStateList.valueOf(0));
 
         fabRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,9 +97,13 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
             @Override
             public void run() {
                 homeText.setText(String.valueOf(data.temperature + "°C - Home(outside)"));
+                homeTextDesc.setText(data.windDirection);
+
+                setWeatherIcon(data.weatherIcon);
             }
         });
     }
+
 
     void getWeatherInformation(String xmlURL){
 
@@ -99,6 +114,37 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
         task.delegate = this;
         task.execute(xmlURL);
 
+    }
+
+
+    // Sets weather icon
+    private void setWeatherIcon(TemperatureData.WeatherIcon weatherIcon) {
+        switch (weatherIcon) {
+            case Sunny:
+                weatherImg.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.sunny));
+                break;
+            case Rain:
+                weatherImg.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.drizzle));
+                break;
+            case Cloudy:
+                weatherImg.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.cloudy));
+                break;
+            case Haze:
+                weatherImg.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.haze));
+                break;
+            case Mostly_Cloudy:
+                weatherImg.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.mostly_cloudy));
+                break;
+            case Slight_Drizzle:
+                weatherImg.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.slight_drizzle));
+                break;
+            case Thunderstorm:
+                weatherImg.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.thunderstorms));
+                break;
+            case Snow:
+                weatherImg.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.snow));
+                break;
+        }
     }
 
 
