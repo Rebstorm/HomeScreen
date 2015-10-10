@@ -35,7 +35,7 @@ public class MusicFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_music, container, false);
         spotifyPlayer = (WebView)v.findViewById(R.id.spotifyWeb);
-        // In order to make the view stay in the app
+        // In order to make the view stay in the app - Look at it as an adapter.
         spotifyPlayer.setWebViewClient(new WebStayView());
         runWebSettings();
 
