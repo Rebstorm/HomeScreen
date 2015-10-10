@@ -1,5 +1,6 @@
 package jacks.paul.homescreen.fragments;
 
+import android.app.Dialog;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import jacks.paul.homescreen.R;
+import jacks.paul.homescreen.adapters.LoadingDialogue;
 import jacks.paul.homescreen.download.DownloadInterface;
 import jacks.paul.homescreen.download.DownloadWeather;
 import jacks.paul.homescreen.parsing.ParseWeather;
@@ -41,6 +43,9 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
     ImageView weatherImg;
     FloatingActionButton fabRefresh;
 
+    //Overlay
+    LoadingDialogue loadWindow;
+
     public HomeFragment() {
         // Why dont I never use these? Thats sad. I like constructors.
     }
@@ -66,13 +71,22 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
         weatherImg = (ImageView)v.findViewById(R.id.weatherImage);
 
         fabRefresh = (FloatingActionButton)v.findViewById(R.id.fabRefresh);
-        fabRefresh.setBackgroundTintList(ColorStateList.valueOf(0));
+        fabRefresh.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(getActivity(), R.color.gray)));
+
+        loadWindow = new LoadingDialogue(getActivity());
+
 
         fabRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getActivity(), "Updating weather information..", Toast.LENGTH_LONG).show();
                 getWeatherInformation("http://api.yr.no/weatherapi/locationforecast/1.9/?lat=50.9;lon=6.9");
+
+                // Loading window
+                loadWindow.open();
+
+
+
             }
         });
 
@@ -98,8 +112,9 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
             public void run() {
                 homeText.setText(String.valueOf(data.temperature + "°C - Home(outside)"));
                 homeTextDesc.setText(data.windDirection);
-
                 setWeatherIcon(data.weatherIcon);
+
+                loadWindow.close();
             }
         });
     }
