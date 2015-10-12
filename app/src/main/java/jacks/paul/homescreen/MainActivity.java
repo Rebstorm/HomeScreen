@@ -33,6 +33,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     //Fragment Manager
     FragmentManager fragmentManager;
 
+
+    //FABs
+    FloatingActionButton fab;
+
+
     // NavDrawer
     DrawerLayout drawer;
 
@@ -59,11 +64,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
          drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabMenu);
-
-
+        fab = (FloatingActionButton) findViewById(R.id.fabMenu);
         fab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(getBaseContext(), R.color.gray )));
-
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

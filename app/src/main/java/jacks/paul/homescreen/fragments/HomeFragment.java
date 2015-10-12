@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -21,10 +20,12 @@ import java.util.Date;
 
 import jacks.paul.homescreen.R;
 import jacks.paul.homescreen.adapters.LoadingDialogue;
+import jacks.paul.homescreen.adapters.NoteButton;
 import jacks.paul.homescreen.download.DownloadInterface;
 import jacks.paul.homescreen.download.DownloadWeather;
 import jacks.paul.homescreen.parsing.ParseWeather;
 import jacks.paul.homescreen.parsing.WeatherInterface;
+import jacks.paul.homescreen.types.NoteData;
 import jacks.paul.homescreen.types.TemperatureData;
 
 /**
@@ -45,13 +46,6 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
 
     LinearLayout noteItems;
 
-    static final String[] numbers = new String[] {
-            "A", "B", "C", "D", "E",
-            "F", "G", "H", "I", "J",
-            "K", "L", "M", "N", "O",
-            "P", "Q", "R", "S", "T",
-            "U", "V", "W", "X", "Y", "Z"};
-
     //UI
     TextView homeText;
     TextView homeTextDesc;
@@ -61,6 +55,7 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
 
     // FAB
     FloatingActionButton fabRefresh;
+    FloatingActionButton fabAdd;
 
     //Overlay
     LoadingDialogue loadWindow;
@@ -89,44 +84,75 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
         homeText = (TextView)v.findViewById(R.id.home_text);
         homeTextDesc = (TextView)v.findViewById(R.id.home_text_desc);
 
+        //WeatherIcon
         weatherImg = (ImageView) v.findViewById(R.id.weatherImage);
+
+        // HorizontalScrollView for notes
+        noteList = (HorizontalScrollView)v.findViewById(R.id.noteScroller);
+        // The HorizontalScrollView child (Holds the noteButtons)
+        noteItems = (LinearLayout)v.findViewById(R.id.scroll_items);
+
+        // TODO: FOR TESTING ONLY!! REMOVE IN PRODUCTION
+        NoteData data = new NoteData();
+        data.header = "Butts, so much butts";
+        data.importance = NoteData.Importance.Middle;
+        NoteButton asd = new NoteButton(getActivity(), data);
+
+        NoteData data1 = new NoteData();
+        data1.header = "Butts, so much butts";
+        data1.importance = NoteData.Importance.Very;
+        NoteButton asd1 = new NoteButton(getActivity(), data1);
+
+        NoteData data2 = new NoteData();
+        data2.header = "Butts, so much butts";
+        data2.importance = NoteData.Importance.Very;
+        NoteButton asd2 = new NoteButton(getActivity(), data2);
+
+        NoteData data3 = new NoteData();
+        data3.header = "Butts, so much butts";
+        data3.importance = NoteData.Importance.Low;
+        NoteButton asd3 = new NoteButton(getActivity(), data3);
+
+        NoteData data4 = new NoteData();
+        data4.header = "Butts, so much butts";
+        data4.importance = NoteData.Importance.Very;
+        NoteButton asd4 = new NoteButton(getActivity(), data4);
+
+        NoteData data5 = new NoteData();
+        data5.header = "Butts, so much butts";
+        data5.importance = NoteData.Importance.Very;
+        NoteButton asd5 = new NoteButton(getActivity(), data5);
+
+        NoteData data6 = new NoteData();
+        data6.header = "Butts, so much butts";
+        data6.importance = NoteData.Importance.Very;
+        NoteButton asd6 = new NoteButton(getActivity(), data6);
+
+        noteItems.addView(asd);
+        noteItems.addView(asd1);
+        noteItems.addView(asd2);
+        noteItems.addView(asd3);
+        noteItems.addView(asd4);
+        noteItems.addView(asd5);
+        noteItems.addView(asd6);
+
+        // Current DateTime
+        dateText = (TextView)v.findViewById(R.id.date_text);
+
+        // The load animation window
+        loadWindow = new LoadingDialogue(getActivity());
+
+        fabAdd = (FloatingActionButton)v.findViewById(R.id.fabAdd);
+        fabAdd.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(getActivity(), R.color.gray)));
+        fabAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                    Toast.makeText(getActivity(), "Here is the add function for new notes", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         fabRefresh = (FloatingActionButton)v.findViewById(R.id.fabRefresh);
         fabRefresh.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(getActivity(), R.color.gray)));
-
-        noteList = (HorizontalScrollView)v.findViewById(R.id.noteScroller);
-
-        noteItems = (LinearLayout)v.findViewById(R.id.scroll_items);
-
-        // TODO: Only for testing!
-        noteItems.addView(new ImageButton(getActivity()));
-        noteItems.addView(new ImageButton(getActivity()));
-        noteItems.addView(new ImageButton(getActivity()));
-        noteItems.addView(new ImageButton(getActivity()));
-        noteItems.addView(new ImageButton(getActivity()));
-        noteItems.addView(new ImageButton(getActivity()));
-        noteItems.addView(new ImageButton(getActivity()));
-        noteItems.addView(new ImageButton(getActivity()));
-        noteItems.addView(new ImageButton(getActivity()));
-        noteItems.addView(new ImageButton(getActivity()));
-        noteItems.addView(new ImageButton(getActivity()));
-        noteItems.addView(new ImageButton(getActivity()));
-        noteItems.addView(new ImageButton(getActivity()));
-        noteItems.addView(new ImageButton(getActivity()));
-        noteItems.addView(new ImageButton(getActivity()));
-        noteItems.addView(new ImageButton(getActivity()));
-        noteItems.addView(new ImageButton(getActivity()));
-        noteItems.addView(new ImageButton(getActivity()));
-        noteItems.addView(new ImageButton(getActivity()));
-        noteItems.addView(new ImageButton(getActivity()));
-
-
-
-        dateText = (TextView)v.findViewById(R.id.date_text);
-
-        loadWindow = new LoadingDialogue(getActivity());
-
-
         fabRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -157,7 +183,6 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
 
     @Override
     public void dataReceived(final TemperatureData data) {
-
         // The Dispatcher. LOL.
         getActivity().runOnUiThread(new Runnable() {
             @Override
@@ -173,8 +198,6 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
 
 
     void getWeatherInformation(String xmlURL){
-
-
         // This is fucking dirty, but since AsyncTasks can only be run once, you always
         // have to make it new for each time. Which means I have to redefine the delegate/interface
         DownloadWeather task = new DownloadWeather();
