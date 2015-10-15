@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import jacks.paul.homescreen.R;
+import jacks.paul.homescreen.adapters.AddDialogue;
 import jacks.paul.homescreen.adapters.LoadingDialogue;
 import jacks.paul.homescreen.adapters.NoteButton;
 import jacks.paul.homescreen.download.DownloadInterface;
@@ -59,6 +60,7 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
 
     //Overlay
     LoadingDialogue loadWindow;
+    AddDialogue addWindow;
 
 
 
@@ -92,62 +94,19 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
         // The HorizontalScrollView child (Holds the noteButtons)
         noteItems = (LinearLayout)v.findViewById(R.id.scroll_items);
 
-        // TODO: FOR TESTING ONLY!! REMOVE IN PRODUCTION
-        NoteData data = new NoteData();
-        data.header = "Butts, so much butts";
-        data.importance = NoteData.Importance.Middle;
-        NoteButton asd = new NoteButton(getActivity(), data);
-
-        NoteData data1 = new NoteData();
-        data1.header = "Butts, so much butts";
-        data1.importance = NoteData.Importance.Very;
-        NoteButton asd1 = new NoteButton(getActivity(), data1);
-
-        NoteData data2 = new NoteData();
-        data2.header = "Butts, so much butts";
-        data2.importance = NoteData.Importance.Very;
-        NoteButton asd2 = new NoteButton(getActivity(), data2);
-
-        NoteData data3 = new NoteData();
-        data3.header = "Butts, so much butts";
-        data3.importance = NoteData.Importance.Low;
-        NoteButton asd3 = new NoteButton(getActivity(), data3);
-
-        NoteData data4 = new NoteData();
-        data4.header = "Butts, so much butts";
-        data4.importance = NoteData.Importance.Very;
-        NoteButton asd4 = new NoteButton(getActivity(), data4);
-
-        NoteData data5 = new NoteData();
-        data5.header = "Butts, so much butts";
-        data5.importance = NoteData.Importance.Very;
-        NoteButton asd5 = new NoteButton(getActivity(), data5);
-
-        NoteData data6 = new NoteData();
-        data6.header = "Butts, so much butts";
-        data6.importance = NoteData.Importance.Very;
-        NoteButton asd6 = new NoteButton(getActivity(), data6);
-
-        noteItems.addView(asd);
-        noteItems.addView(asd1);
-        noteItems.addView(asd2);
-        noteItems.addView(asd3);
-        noteItems.addView(asd4);
-        noteItems.addView(asd5);
-        noteItems.addView(asd6);
-
         // Current DateTime
         dateText = (TextView)v.findViewById(R.id.date_text);
 
         // The load animation window
         loadWindow = new LoadingDialogue(getActivity());
+        addWindow = new AddDialogue(getActivity());
 
         fabAdd = (FloatingActionButton)v.findViewById(R.id.fabAdd);
         fabAdd.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(getActivity(), R.color.gray)));
         fabAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    Toast.makeText(getActivity(), "Here is the add function for new notes", Toast.LENGTH_SHORT).show();
+                addWindow.show();
             }
         });
 

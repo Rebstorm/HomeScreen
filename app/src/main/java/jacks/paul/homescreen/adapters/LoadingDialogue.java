@@ -28,13 +28,10 @@ public class LoadingDialogue {
     }
 
     public void open(){
-
         loadingDialogue.show();
-
     }
 
     public void close(){
-
         loadingDialogue.cancel();
     }
 
