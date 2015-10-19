@@ -68,7 +68,7 @@
                 android:layout_width="150dp"
                 android:layout_height="75dp"
                 android:text="Add"
-                android:src="@drawable/overlay_add"
+                android:src="@android:drawable/ic_input_add"
                 android:background="@color/gray"
                 android:layout_below="@id/overlay_add_importance"
                 />
@@ -77,7 +77,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="75dp"
                 android:text="Add"
-                android:src="@drawable/overlay_rmv"
+                android:src="@android:drawable/ic_notification_clear_all"
                 android:background="@color/gray"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentEnd="true"
