@@ -22,6 +22,7 @@ import jacks.paul.homescreen.R;
 import jacks.paul.homescreen.adapters.AddDialogue;
 import jacks.paul.homescreen.adapters.LoadingDialogue;
 import jacks.paul.homescreen.adapters.NoteButton;
+import jacks.paul.homescreen.adapters.NoteInterface;
 import jacks.paul.homescreen.download.DownloadInterface;
 import jacks.paul.homescreen.download.DownloadWeather;
 import jacks.paul.homescreen.parsing.ParseWeather;
@@ -37,10 +38,10 @@ import jacks.paul.homescreen.types.TemperatureData;
  * Use the {@link HomeFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class HomeFragment extends Fragment implements DownloadInterface, WeatherInterface {
+public class HomeFragment extends Fragment implements DownloadInterface, WeatherInterface, NoteInterface {
 
-    public DownloadInterface response;
-   // DownloadWeather task = new DownloadWeather();
+
+    // DownloadWeather task = new DownloadWeather();
     ParseWeather xml = new ParseWeather();
 
     HorizontalScrollView noteList;
@@ -99,7 +100,10 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
 
         // The load animation window
         loadWindow = new LoadingDialogue(getActivity());
+
+        // The Add window + Delegate
         addWindow = new AddDialogue(getActivity());
+        addWindow.noteReceived = this;
 
         fabAdd = (FloatingActionButton)v.findViewById(R.id.fabAdd);
         fabAdd.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(getActivity(), R.color.gray)));
@@ -117,17 +121,17 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
             public void onClick(View v) {
                 Toast.makeText(getActivity(), "Updating weather information..", Toast.LENGTH_LONG).show();
                 getWeatherInformation("http://api.yr.no/weatherapi/locationforecast/1.9/?lat=50.9;lon=6.9");
-
                 // Loading window
                 loadWindow.open();
-
-
             }
         });
 
         // Update UI
+        /*
+        TODO: ADD THIS IN LATER, WHEN YOURE DONE FIXING EVERYTHIGN ELSE TO EASE UP ON THE API RESTRAINT
         getWeatherInformation("http://api.yr.no/weatherapi/locationforecast/1.9/?lat=50.9;lon=6.9");
         getDate();
+         */
 
 
         return v;
@@ -203,7 +207,10 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
         }
     }
 
-
-
+    // Note data
+    @Override
+    public void newNote(NoteData data) {
+       noteItems.addView(new NoteButton(getActivity(), data));
+    }
 }
 

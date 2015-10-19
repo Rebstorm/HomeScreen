@@ -22,17 +22,18 @@ public class LoadingDialogue {
 
         loadingDialogue = new Dialog(appContext);
         loadingDialogue.requestWindowFeature(Window.FEATURE_NO_TITLE);
-
         loadingDialogue.setContentView(R.layout.overlay_loadingscreen);
 
     }
 
+    // OPEN
     public void open(){
         loadingDialogue.show();
     }
 
+    // CLOSE
     public void close(){
-        loadingDialogue.cancel();
+        loadingDialogue.dismiss();
     }
 
 }

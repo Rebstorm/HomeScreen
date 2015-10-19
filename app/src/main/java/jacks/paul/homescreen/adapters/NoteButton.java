@@ -57,7 +57,8 @@ public class NoteButton extends Button {
         this.setLayoutParams(buttonDesign);
 
         // header text
-        this.setText(data.header);
+        if(data.header != null)
+            this.setText(data.header);
         this.setTextColor(Color.WHITE);
 
         // Set imporance of note
