@@ -2,10 +2,16 @@ package jacks.paul.homescreen.adapters;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.drawable.BitmapDrawable;
+import android.media.Image;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.SeekBar;
 
 import java.util.Date;
 import java.util.logging.SimpleFormatter;
@@ -23,7 +29,10 @@ public class AddDialogue extends Dialog {
     Dialog addWindow;
     EditText subjectLine;
     EditText contextText;
-    Button addButton;
+    ImageButton addButton;
+    ImageButton cancelButton;
+    DatePicker datePicker;
+    SeekBar seeker;
 
     NoteData data;
 
@@ -41,10 +50,16 @@ public class AddDialogue extends Dialog {
 
         subjectLine = (EditText) addWindow.findViewById(R.id.overlay_add_subject);
         contextText = (EditText) addWindow.findViewById(R.id.overlay_add_text);
-        addButton = (Button) addWindow.findViewById(R.id.overlay_add_button);
+        addButton = (ImageButton) addWindow.findViewById(R.id.overlay_add_button);
+        cancelButton = (ImageButton)addWindow.findViewById(R.id.overlay_cancel_button);
+        datePicker = (DatePicker)addWindow.findViewById(R.id.overlay_add_date);
+        seeker = (SeekBar) addWindow.findViewById(R.id.overlay_add_importance);
 
-        // Canceable.
-        addWindow.setCancelable(false);
+        seeker.setProgressDrawable(getContext().getDrawable(R.drawable.overlay_seeker_bar));
+
+
+                // Canceable.
+                addWindow.setCancelable(false);
 
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,11 +67,31 @@ public class AddDialogue extends Dialog {
 
                 NoteData data = new NoteData();
                 data.text = contextText.getText().toString();
-                data.importance = NoteData.Importance.Very;
+
                 data.header = subjectLine.getText().toString();
-                data.expiryDate = new Date();
+                data.expiryDate = new Date(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
+
+                if (seeker.getProgress() < 30) {
+                    data.importance = NoteData.Importance.Low;
+                } else if (seeker.getProgress() > 30 && seeker.getProgress() < 60) {
+                    data.importance = NoteData.Importance.Middle;
+                } else if (seeker.getProgress() > 60) {
+                    data.importance = NoteData.Importance.Very;
+                }
+
+                // Reset
+                seeker.setProgress(0);
+                subjectLine.setText("");
+                contextText.setText("");
 
                 noteReceived.newNote(data);
+                close();
+            }
+        });
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 close();
             }
         });

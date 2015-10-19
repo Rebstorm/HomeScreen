@@ -5,14 +5,17 @@
 
 
     <ScrollView
-        android:layout_width="700dp"
+        android:layout_width="fill_parent"
         android:layout_height="match_parent"
         android:id="@+id/scrollView" >
 
-        <LinearLayout
+        <RelativeLayout
+            android:background="@color/gray"
             android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="500dp"
+            android:layout_height="300dp"
+            android:paddingLeft="100dp"
+            android:paddingRight="100dp"
             android:id="@+id/overlay_add_content">
 
             <EditText
@@ -21,21 +24,66 @@
                 android:layout_height="70dp"
                 android:hint="Subject"
                 android:textSize="24sp"
+                android:textColorHint="@color/white"
+                android:textColor="@color/white"
                 />
 
             <EditText
                 android:id="@+id/overlay_add_text"
                 android:layout_width="match_parent"
-                android:layout_height="250dp"
-                android:hint="Text.."
+                android:layout_height="100dp"
+                android:hint="Information.."
+                android:textColor="@color/white"
+                android:textColorHint="@color/white"
+                android:layout_below="@id/overlay_add_subject"
                 />
 
-            <Button
-                android:id="@+id/overlay_add_button"
+            <DatePicker
+                android:id="@+id/overlay_add_date"
                 android:layout_width="match_parent"
-                android:layout_height="200dp" />
+                android:layout_height="match_parent"
+                android:datePickerMode="spinner"
+                android:spinnersShown="true"
+                android:calendarViewShown="false"
+                android:layout_below="@id/overlay_add_text" />
+            <TextView
+                android:id="@+id/overlay_text_importance"
+                android:layout_width="match_parent"
+                android:text="Importance:"
+                android:textColor="@color/white"
+                android:layout_height="30dp"
+                android:layout_below="@+id/overlay_add_date"
 
-        </LinearLayout>
+                />
+            <SeekBar
+                android:id="@+id/overlay_add_importance"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:progress="1"
+                android:layout_below="@+id/overlay_text_importance"
+                />
+
+            <ImageButton
+                android:id="@+id/overlay_add_button"
+                android:layout_width="150dp"
+                android:layout_height="75dp"
+                android:text="Add"
+                android:src="@drawable/overlay_add"
+                android:background="@color/gray"
+                android:layout_below="@id/overlay_add_importance"
+                />
+            <ImageButton
+                android:id="@+id/overlay_cancel_button"
+                android:layout_width="match_parent"
+                android:layout_height="75dp"
+                android:text="Add"
+                android:src="@drawable/overlay_rmv"
+                android:background="@color/gray"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:layout_toEndOf="@+id/overlay_add_button" />
+
+        </RelativeLayout>
     </ScrollView>
 
 
