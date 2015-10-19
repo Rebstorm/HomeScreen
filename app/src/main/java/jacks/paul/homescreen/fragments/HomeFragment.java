@@ -8,15 +8,24 @@ import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.sql.Time;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 import jacks.paul.homescreen.R;
 import jacks.paul.homescreen.adapters.AddDialogue;
@@ -63,7 +72,13 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
     LoadingDialogue loadWindow;
     AddDialogue addWindow;
 
+    //Animation Bool
+    Boolean isFinishedDownloading;
+    AnimationSet animation;
 
+
+     // Timer & Auto refresh
+    Timer weatherTimer;
 
     public HomeFragment() {
         // Why dont I never use these? Thats sad. I like constructors.
@@ -127,12 +142,26 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
         });
 
         // Update UI
-        /*
-        TODO: ADD THIS IN LATER, WHEN YOURE DONE FIXING EVERYTHIGN ELSE TO EASE UP ON THE API RESTRAINT
         getWeatherInformation("http://api.yr.no/weatherapi/locationforecast/1.9/?lat=50.9;lon=6.9");
         getDate();
-         */
 
+        // Timer that updates automatically every hour.
+        weatherTimer = new Timer();
+        weatherTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Update UI
+                        getWeatherInformation("http://api.yr.no/weatherapi/locationforecast/1.9/?lat=50.9;lon=6.9");
+                        getDate();
+                    }
+                });
+
+            }
+        // 3600000 ms = 1 hr
+        }, 3600000);
 
         return v;
     }
@@ -150,6 +179,9 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                // clear the animation
+                animation.setAnimationListener(null);
+
                 homeText.setText(String.valueOf(data.temperature + "°C - Home(outside)"));
                 homeTextDesc.setText(data.windDirection);
                 setWeatherIcon(data.weatherIcon);
@@ -163,9 +195,54 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
     void getWeatherInformation(String xmlURL){
         // This is fucking dirty, but since AsyncTasks can only be run once, you always
         // have to make it new for each time. Which means I have to redefine the delegate/interface
+        isFinishedDownloading = false;
         DownloadWeather task = new DownloadWeather();
         task.delegate = this;
         task.execute(xmlURL);
+        animateWeatherUpdate();
+    }
+
+
+    //Animation! WOAAH!
+    void animateWeatherUpdate(){
+
+        homeText.setText("Updating...");
+
+        // Fade in
+        Animation fadeIn = new AlphaAnimation(0, 1);
+        fadeIn.setInterpolator(new DecelerateInterpolator());
+        fadeIn.setDuration(1000);
+
+        // Fade out
+        Animation fadeOut = new AlphaAnimation(1, 0);
+        fadeOut.setInterpolator(new AccelerateInterpolator());
+        fadeOut.setStartOffset(1000);
+        fadeOut.setDuration(1000);
+
+        animation = new AnimationSet(false); //change to false
+        animation.addAnimation(fadeIn);
+        animation.addAnimation(fadeOut);
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                homeText.startAnimation(animation);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        homeText.startAnimation(animation);
+        weatherImg.startAnimation(animation);
+
+
+
 
     }
 
@@ -179,6 +256,8 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
 
     // Sets weather icon
     private void setWeatherIcon(TemperatureData.WeatherIcon weatherIcon) {
+
+
         switch (weatherIcon) {
             case Sunny:
                 weatherImg.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.sunny));
@@ -204,6 +283,8 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
             case Snow:
                 weatherImg.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.snow));
                 break;
+
+
         }
     }
 
