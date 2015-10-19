@@ -66,8 +66,14 @@ public class ParseWeather {
                     Looks like this:
                     <windDirection id="dd" deg="52.3" name="NE"/>
                      */
-                    data.windDirection = elements.getElementsByTagName("windDirection").item(0).getAttributes().item(1).getTextContent() + " " +
+                    data.windDirection = "Wind Direction: " + elements.getElementsByTagName("windDirection").item(0).getAttributes().item(1).getTextContent() + " " +
                                              elements.getElementsByTagName("windDirection").item(0).getAttributes().item(2).getTextContent();
+
+                    /* Humidity
+                    Looks like this:
+                    <humidity value="97.8" unit="percent"/>
+                     */
+                    data.humidity = "Humidity: " + elements.getElementsByTagName("humidity").item(0).getAttributes().item(0).getTextContent() +"%";
 
                 }
 

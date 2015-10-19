@@ -183,7 +183,7 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
                 animation.setAnimationListener(null);
 
                 homeText.setText(String.valueOf(data.temperature + "°C - Home(outside)"));
-                homeTextDesc.setText(data.windDirection);
+                homeTextDesc.setText(data.windDirection + "\n" + data.humidity);
                 setWeatherIcon(data.weatherIcon);
 
                 loadWindow.close();

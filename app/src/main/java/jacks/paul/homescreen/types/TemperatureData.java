@@ -20,7 +20,7 @@ public class TemperatureData {
     public WeatherIcon weatherIcon = WeatherIcon.Thunderstorm;
     public String windDirection = "ERROR";
     public String windSpeed = "N/A";
-    public double humidity = 0.0;
+    public String humidity = "ERROR";
 
 
 }
