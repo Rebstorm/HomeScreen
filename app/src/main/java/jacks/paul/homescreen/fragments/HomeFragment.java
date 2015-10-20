@@ -72,8 +72,7 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
     LoadingDialogue loadWindow;
     AddDialogue addWindow;
 
-    //Animation Bool
-    Boolean isFinishedDownloading;
+    //Animation
     AnimationSet animation;
 
 
@@ -136,32 +135,29 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
             public void onClick(View v) {
                 Toast.makeText(getActivity(), "Updating weather information..", Toast.LENGTH_LONG).show();
                 getWeatherInformation("http://api.yr.no/weatherapi/locationforecast/1.9/?lat=50.9;lon=6.9");
+                getDate();
                 // Loading window
                 loadWindow.open();
             }
         });
 
-        // Update UI
-        getWeatherInformation("http://api.yr.no/weatherapi/locationforecast/1.9/?lat=50.9;lon=6.9");
-        getDate();
 
         // Timer that updates automatically every hour.
         weatherTimer = new Timer();
-        weatherTimer.schedule(new TimerTask() {
+        weatherTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
+
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        // Update UI
                         getWeatherInformation("http://api.yr.no/weatherapi/locationforecast/1.9/?lat=50.9;lon=6.9");
                         getDate();
                     }
                 });
 
-            }
-        // 3600000 ms = 1 hr
-        }, 3600000);
+            }// 3600000 ms = 1 hr
+        },0, 3600000);
 
         return v;
     }
@@ -182,7 +178,7 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
                 // clear the animation
                 animation.setAnimationListener(null);
 
-                homeText.setText(String.valueOf(data.temperature + "°C - Home(outside)"));
+                homeText.setText(String.valueOf(data.temperature + "°C - Outside"));
                 homeTextDesc.setText(data.windDirection + "\n" + data.humidity);
                 setWeatherIcon(data.weatherIcon);
 
@@ -195,7 +191,6 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
     void getWeatherInformation(String xmlURL){
         // This is fucking dirty, but since AsyncTasks can only be run once, you always
         // have to make it new for each time. Which means I have to redefine the delegate/interface
-        isFinishedDownloading = false;
         DownloadWeather task = new DownloadWeather();
         task.delegate = this;
         task.execute(xmlURL);
@@ -248,10 +243,10 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
 
     private void getDate(){
 
-        DateFormat dateNow = new SimpleDateFormat("EEE, dd/MM - yyyy");
+        DateFormat dateNow = new SimpleDateFormat("HH:mm, EEE, dd/MM - yyyy");
         Date currentTime = new Date();
 
-        dateText.setText(dateNow.format(currentTime));
+        dateText.setText("Last updated: " + dateNow.format(currentTime));
     }
 
     // Sets weather icon
