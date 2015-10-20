@@ -15,7 +15,9 @@ import jacks.paul.homescreen.R;
 import jacks.paul.homescreen.adapters.WebStayView;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Music Fragment, details from Spotify:
+ *
+ * https://developer.spotify.com/my-applications/#!/applications/c30927946e87452e8101595852c75588
  */
 public class MusicFragment extends Fragment implements PlayerNotificationCallback, ConnectionStateCallback {
 
