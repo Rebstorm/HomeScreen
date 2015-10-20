@@ -6,8 +6,8 @@
             android:title="Home" />
         <item android:id="@+id/nav_music" android:icon="@drawable/music"
             android:title="Music" />
-        <item android:id="@+id/nav_gallery" android:icon="@android:drawable/ic_menu_gallery"
-            android:title="Weather" />
+        <item android:id="@+id/nav_web" android:icon="@android:drawable/ic_input_get"
+            android:title="Web" />
         <item android:id="@+id/nav_slideshow" android:icon="@android:drawable/ic_menu_slideshow"
             android:title="Other Option" />
         <item android:id="@+id/nav_manage" android:icon="@android:drawable/ic_menu_manage"

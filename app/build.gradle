@@ -19,9 +19,22 @@ android {
     }
 }
 
+repositories {
+    mavenCentral()
+    flatDir {
+        dirs 'libs'
+    }
+}
+
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.0.1'
     compile 'com.android.support:design:23.0.1'
+
+    // Spotify Auth/Cert
+    compile 'com.spotify.sdk:spotify-auth:1.0.0-beta11@aar'
+    // Spotify Playback
+    compile 'com.spotify.sdk:spotify-player:1.0.0-beta11@aar'
+
 }

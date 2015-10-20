@@ -39,19 +39,14 @@ import jacks.paul.homescreen.parsing.WeatherInterface;
 import jacks.paul.homescreen.types.NoteData;
 import jacks.paul.homescreen.types.TemperatureData;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link HomeFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link HomeFragment#newInstance} factory method to
- * create an instance of this fragment.
+/*
+       HOME FRAGMENT, CONTAINS WEATHER AND NOTES
  */
 public class HomeFragment extends Fragment implements DownloadInterface, WeatherInterface, NoteInterface {
 
 
     // DownloadWeather task = new DownloadWeather();
-    ParseWeather xml = new ParseWeather();
+    public ParseWeather xml = new ParseWeather();
 
     HorizontalScrollView noteList;
 
@@ -75,12 +70,10 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
     //Animation
     AnimationSet animation;
 
-
-     // Timer & Auto refresh
+    // Timer & Auto refresh
     Timer weatherTimer;
 
     public HomeFragment() {
-        // Why dont I never use these? Thats sad. I like constructors.
     }
 
     // TODO: Find out difference between onCreate & onCreateView.
@@ -141,23 +134,22 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
             }
         });
 
-
         // Timer that updates automatically every hour.
         weatherTimer = new Timer();
         weatherTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         getWeatherInformation("http://api.yr.no/weatherapi/locationforecast/1.9/?lat=50.9;lon=6.9");
                         getDate();
+
                     }
                 });
 
             }// 3600000 ms = 1 hr
-        },0, 3600000);
+        }, 0, 3600000);
 
         return v;
     }
@@ -188,10 +180,10 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
     }
 
 
-    void getWeatherInformation(String xmlURL){
+    public void getWeatherInformation(String xmlURL){
         // This is fucking dirty, but since AsyncTasks can only be run once, you always
         // have to make it new for each time. Which means I have to redefine the delegate/interface
-        DownloadWeather task = new DownloadWeather();
+         DownloadWeather task = new DownloadWeather();
         task.delegate = this;
         task.execute(xmlURL);
         animateWeatherUpdate();
@@ -241,8 +233,7 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
 
     }
 
-    private void getDate(){
-
+    public void getDate(){
         DateFormat dateNow = new SimpleDateFormat("HH:mm, EEE, dd/MM - yyyy");
         Date currentTime = new Date();
 

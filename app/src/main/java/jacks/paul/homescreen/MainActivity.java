@@ -22,8 +22,14 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import jacks.paul.homescreen.fragments.HomeFragment;
 import jacks.paul.homescreen.fragments.MusicFragment;
+import jacks.paul.homescreen.fragments.WebFragment;
+import jacks.paul.homescreen.parsing.WeatherInterface;
+import jacks.paul.homescreen.types.TemperatureData;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -31,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     //Fragments
     MusicFragment musicFragment;
     HomeFragment homeFragment;
+    WebFragment webFragment;
 
     //Fragment Manager
     FragmentManager fragmentManager;
@@ -39,9 +46,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     //FABs
     FloatingActionButton fab;
 
-
     // NavDrawer
     DrawerLayout drawer;
+
+    TemperatureData data = new TemperatureData();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,24 +60,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //Never sleep
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-
         // Toolbar
         /*
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         */
-        
 
         // Music Fragment
         musicFragment = new MusicFragment();
         homeFragment = new HomeFragment();
+        webFragment = new WebFragment();
 
         //Fragment manager
         fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_main, homeFragment).commit();
 
-         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         fab = (FloatingActionButton) findViewById(R.id.fabMenu);
         fab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(getBaseContext(), R.color.gray )));
@@ -140,11 +147,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if (id == R.id.nav_music) {
             fragmentManager.beginTransaction().replace(R.id.content_main, musicFragment).commit();
-
         } else if (id == R.id.nav_home) {
             fragmentManager.beginTransaction().replace(R.id.content_main, homeFragment).commit();
-        } else if (id == R.id.nav_gallery) {
-            Toast.makeText(getApplication(), "asd", Toast.LENGTH_LONG).show();
+        } else if (id == R.id.nav_web) {
+            fragmentManager.beginTransaction().replace(R.id.content_main, webFragment).commit();
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
@@ -155,4 +161,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+
 }

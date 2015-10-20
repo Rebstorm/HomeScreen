@@ -72,6 +72,7 @@ public class NoteDatabase extends SQLiteOpenHelper {
 
     }
 
+    // Pulls data according to id
     public NoteData getNote(int id){
 
         Cursor cursor = db.query(NOTE_TABLE,

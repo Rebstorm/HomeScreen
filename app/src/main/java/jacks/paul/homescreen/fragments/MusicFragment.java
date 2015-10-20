@@ -1,7 +1,5 @@
 package jacks.paul.homescreen.fragments;
 
-import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -9,15 +7,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 
+import com.spotify.sdk.android.player.ConnectionStateCallback;
+import com.spotify.sdk.android.player.PlayerNotificationCallback;
+import com.spotify.sdk.android.player.PlayerState;
+
 import jacks.paul.homescreen.R;
 import jacks.paul.homescreen.adapters.WebStayView;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MusicFragment extends Fragment {
-
-    WebView spotifyPlayer;
+public class MusicFragment extends Fragment implements PlayerNotificationCallback, ConnectionStateCallback {
 
     public MusicFragment() {
         // Required empty public constructor
@@ -34,18 +34,46 @@ public class MusicFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_music, container, false);
-        spotifyPlayer = (WebView)v.findViewById(R.id.spotifyWeb);
-        // In order to make the view stay in the app - Look at it as an adapter.
-        spotifyPlayer.setWebViewClient(new WebStayView());
-        runWebSettings();
 
         return v;
 
     }
 
-    private void runWebSettings() {
-        spotifyPlayer.loadUrl("http://google.com");
+
+
+
+    @Override
+    public void onLoggedIn() {
+
     }
 
+    @Override
+    public void onLoggedOut() {
 
+    }
+
+    @Override
+    public void onLoginFailed(Throwable throwable) {
+
+    }
+
+    @Override
+    public void onTemporaryError() {
+
+    }
+
+    @Override
+    public void onConnectionMessage(String s) {
+
+    }
+
+    @Override
+    public void onPlaybackEvent(EventType eventType, PlayerState playerState) {
+
+    }
+
+    @Override
+    public void onPlaybackError(ErrorType errorType, String s) {
+
+    }
 }
