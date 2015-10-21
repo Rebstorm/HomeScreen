@@ -180,6 +180,7 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
     }
 
 
+
     public void getWeatherInformation(String xmlURL){
         // This is fucking dirty, but since AsyncTasks can only be run once, you always
         // have to make it new for each time. Which means I have to redefine the delegate/interface
