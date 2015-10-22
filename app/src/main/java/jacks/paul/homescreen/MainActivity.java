@@ -25,6 +25,7 @@ import android.widget.Toast;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import jacks.paul.homescreen.db.NoteDatabase;
 import jacks.paul.homescreen.fragments.HomeFragment;
 import jacks.paul.homescreen.fragments.MusicFragment;
 import jacks.paul.homescreen.fragments.WebFragment;
@@ -33,6 +34,9 @@ import jacks.paul.homescreen.types.TemperatureData;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+
+    // Sqlite DB
+    public NoteDatabase noteDatabase;
 
     //Fragments
     MusicFragment musicFragment;
@@ -65,6 +69,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         */
+
+        noteDatabase = new NoteDatabase(getApplicationContext());
 
         // Music Fragment
         musicFragment = new MusicFragment();

@@ -6,6 +6,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jacks.paul.homescreen.types.NoteData;
 
 /**
@@ -31,7 +34,7 @@ public class NoteDatabase extends SQLiteOpenHelper {
     // DB
     SQLiteDatabase db;
 
-    public NoteDatabase(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
+    public NoteDatabase(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
 
         // Gets the DB in the Constructor
@@ -98,6 +101,36 @@ public class NoteDatabase extends SQLiteOpenHelper {
             data.importance = NoteData.Importance.Low;
 
         return data;
+    }
+
+    // Like, get all of them DB Entries!
+    public List<NoteData> getAllNotes(){
+        List<NoteData> allNotes = new ArrayList<NoteData>();
+
+        String selectQuery = "SELECT * FROM " + NOTE_TABLE;
+
+        Cursor cQuestion =  db.rawQuery(selectQuery, null);
+
+        if(cQuestion.moveToFirst()){
+
+            do {
+                NoteData data = new NoteData();
+                data.header = cQuestion.getString(1);
+                data.text = cQuestion.getString(2);
+
+                if (cQuestion.getString(4).equals("1"))
+                    data.importance = NoteData.Importance.Very;
+                else if(cQuestion.getString(4).equals("2"))
+                    data.importance = NoteData.Importance.Middle;
+                else if(cQuestion.getString(4).equals("3"))
+                    data.importance = NoteData.Importance.Low;
+
+                allNotes.add(data);
+            }while(cQuestion.moveToNext());
+
+
+        }
+        return  allNotes;
     }
 
 

@@ -42,6 +42,9 @@ import jacks.paul.homescreen.adapters.WebStayView;
  * Music Fragment, details from Spotify:
  *
  * https://developer.spotify.com/my-applications/#!/applications/c30927946e87452e8101595852c75588
+ *
+ * Im putting this on hiatus until I have the time and bother to figure out the authentication stuff in Spotify.
+ *
  */
 public class MusicFragment extends Fragment implements PlayerNotificationCallback, ConnectionStateCallback {
 
@@ -117,9 +120,7 @@ public class MusicFragment extends Fragment implements PlayerNotificationCallbac
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (mPlayer != null) {
-                    Connectivity connectivity = getNetworkConnectivity(getActivity());
-                    logStatus("Network state changed: " + connectivity.toString());
-                    mPlayer.setConnectivityStatus(connectivity);
+
                 }
             }
         };
@@ -149,207 +150,6 @@ public class MusicFragment extends Fragment implements PlayerNotificationCallbac
 
     }
 
-
-    private Connectivity getNetworkConnectivity(Context context) {
-        ConnectivityManager connectivityManager;
-        connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
-        if (activeNetwork != null && activeNetwork.isConnected()) {
-            return Connectivity.fromNetworkType(activeNetwork.getType());
-        } else {
-            return Connectivity.OFFLINE;
-        }
-    }
-
-    private void logStatus(String status) {
-        Log.i("SpotifySdkDemo", status);
-        if (!TextUtils.isEmpty(mStatusText.getText())) {
-            mStatusText.append("\n");
-        }
-        mStatusText.append(status);
-        mStatusTextScrollView.post(new Runnable() {
-            @Override
-            public void run() {
-                // Scroll to the bottom
-                mStatusTextScrollView.fullScroll(View.FOCUS_DOWN);
-            }
-        });
-    }
-
-    public Intent registerReceiver(
-            BroadcastReceiver receiver, IntentFilter filter) {
-        return getActivity().registerReceiver(receiver, filter);
-    }
-
-    private void updateButtons() {
-        boolean loggedIn = isLoggedIn();
-
-        // Login button should be the inverse of the logged in state
-        Button loginButton = (Button) getActivity().findViewById(R.id.spotifyLoginButton);
-        loginButton.setText(loggedIn ? "Log in" : "Logged in");
-
-    }
-
-
-
-    private void openLoginWindow() {
-        final AuthenticationRequest request = new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI)
-                .setScopes(new String[]{"user-read-private", "playlist-read", "playlist-read-private", "streaming"})
-                .build();
-
-        AuthenticationClient.openLoginActivity(getActivity(), REQUEST_CODE, request);
-    }
-
-    @Override
-    void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        super.onActivityResult(requestCode, resultCode, intent);
-
-        // Check if result comes from the correct activity
-        if (requestCode == REQUEST_CODE) {
-            AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
-            switch (response.getType()) {
-                // Response was successful and contains auth token
-                case TOKEN:
-                    onAuthenticationComplete(response);
-                    break;
-
-                // Auth flow returned an error
-                case ERROR:
-                    logStatus("Auth error: " + response.getError());
-                    break;
-
-                // Most likely auth flow was cancelled
-                default:
-                    logStatus("Auth result: " + response.getType());
-            }
-        }
-    }
-
-    private void onAuthenticationComplete(AuthenticationResponse authResponse) {
-        // Once we have obtained an authorization token, we can proceed with creating a Player.
-        logStatus("Got authentication token");
-        if (mPlayer == null) {
-            Config playerConfig = new Config(getActivity(), authResponse.getAccessToken(), CLIENT_ID);
-            // Since the Player is a static singleton owned by the Spotify class, we pass "this" as
-            // the second argument in order to refcount it properly. Note that the method
-            // Spotify.destroyPlayer() also takes an Object argument, which must be the same as the
-            // one passed in here. If you pass different instances to Spotify.getPlayer() and
-            // Spotify.destroyPlayer(), that will definitely result in resource leaks.
-            mPlayer = Spotify.getPlayer(playerConfig, this, new Player.InitializationObserver() {
-                @Override
-                public void onInitialized(Player player) {
-                    logStatus("-- Player initialized --");
-                    mPlayer.setConnectivityStatus(getNetworkConnectivity(getActivity()));
-                    mPlayer.addPlayerNotificationCallback(MusicFragment.this);
-                    mPlayer.addConnectionStateCallback(MusicFragment.this);
-                    // Trigger UI refresh
-                    updateButtons();
-                }
-
-                @Override
-                public void onError(Throwable error) {
-                    logStatus("Error in initialization: " + error.getMessage());
-                }
-            });
-        } else {
-            mPlayer.login(authResponse.getAccessToken());
-        }
-    }
-
-    public void onShowPlayerStateButtonClicked(View view) {
-        mPlayer.getPlayerState(new PlayerStateCallback() {
-            @Override
-            public void onPlayerState(PlayerState playerState) {
-                logStatus("-- Current player state --");
-                logStatus("Playing? " + playerState.playing);
-                logStatus("Position: " + playerState.positionInMs + "ms");
-                logStatus("Shuffling? " + playerState.shuffling);
-                logStatus("Repeating? " + playerState.repeating);
-                logStatus("Active device? " + playerState.activeDevice);
-                logStatus("Track uri: " + playerState.trackUri);
-                logStatus("Track duration: " + playerState.durationInMs);
-            }
-        });
-    }
-
-    public void onPlayButtonClicked(View view) {
-        if (view.getId() == R.id.play_album_button) {
-            logStatus("Starting playback the list of tracks");
-            mPlayer.play(TEST_ALBUM_TRACKS);
-        } else {
-            String uri;
-            switch (view.getId()) {
-                case R.id.play_track_button:
-                    uri = TEST_SONG_URI;
-                    break;
-                case R.id.play_mono_track_button:
-                    uri = TEST_SONG_MONO_URI;
-                    break;
-                case R.id.play_48khz_track_button:
-                    uri = TEST_SONG_48kHz_URI;
-                    break;
-                case R.id.play_playlist_button:
-                    uri = TEST_PLAYLIST_URI;
-                    break;
-                default:
-                    throw new IllegalArgumentException("View ID does not have an associated URI to play");
-            }
-
-            logStatus("Starting playback for " + uri);
-            mPlayer.play(uri);
-        }
-    }
-
-    public void onPauseButtonClicked(View view) {
-        if (mCurrentPlayerState.playing) {
-            mPlayer.pause();
-        } else {
-            mPlayer.resume();
-        }
-    }
-
-    public void onSkipToPreviousButtonClicked(View view) {
-        mPlayer.skipToPrevious();
-    }
-
-    public void onSkipToNextButtonClicked(View view) {
-        mPlayer.skipToNext();
-    }
-
-    public void onQueueSongButtonClicked(View view) {
-        mPlayer.queue(TEST_QUEUE_SONG_URI);
-        Toast toast = Toast.makeText(getActivity(), "Queue button clicked", Toast.LENGTH_SHORT);
-        toast.show();
-    }
-
-    public void onToggleShuffleButtonClicked(View view) {
-        mPlayer.setShuffle(!mCurrentPlayerState.shuffling);
-    }
-
-    public void onToggleRepeatButtonClicked(View view) {
-        mPlayer.setRepeat(!mCurrentPlayerState.repeating);
-    }
-
-    public void onSeekButtonClicked(View view) {
-        // Skip to 10 seconds in the current song
-        mPlayer.seekToPosition(10000);
-    }
-
-    public void onLowBitrateButtonPressed(View view) {
-        mPlayer.setPlaybackBitrate(PlaybackBitrate.BITRATE_LOW);
-    }
-
-    public void onNormalBitrateButtonPressed(View view) {
-        mPlayer.setPlaybackBitrate(PlaybackBitrate.BITRATE_NORMAL);
-    }
-
-    public void onHighBitrateButtonPressed(View view) {
-        mPlayer.setPlaybackBitrate(PlaybackBitrate.BITRATE_HIGH);
-    }
-
-    private boolean isLoggedIn() {
-        return mPlayer != null && mPlayer.isLoggedIn();
-    }
 
     @Override
     public void onLoggedIn() {
