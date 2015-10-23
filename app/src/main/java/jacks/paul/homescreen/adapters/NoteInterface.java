@@ -9,4 +9,6 @@ public interface NoteInterface {
 
     void newNote(NoteData data);
 
+    void removeNote(NoteData data);
+
 }

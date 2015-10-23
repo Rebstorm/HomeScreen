@@ -22,13 +22,14 @@ import jacks.paul.homescreen.types.NoteData;
  * Created by Paul on 12/10/2015.
  * ITS NOT A DEFAULT FILE TEMPLATE NO MORE, GOD MOTHER F*CKING DAMN IT.
  */
-public class NoteButton extends Button {
+public class NoteButton extends Button{
 
     private Paint colorUrgency;
     private int height = 400;
     private int width = 300;
     public NoteData data;
 
+    public NoteInterface buttonListener;
 
     Context context;
 
@@ -81,7 +82,17 @@ public class NoteButton extends Button {
         this.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, "clicked button" + data.header, Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "clicked button: " + data.id, Toast.LENGTH_LONG).show();
+            }
+        });
+
+        this.setOnLongClickListener(new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Toast.makeText(context, "clicked long listener, id: " + data.id, Toast.LENGTH_LONG).show();
+                buttonListener.removeNote(data);
+
+                return true;
             }
         });
 

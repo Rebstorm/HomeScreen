@@ -1,5 +1,6 @@
 package jacks.paul.homescreen.fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
@@ -20,10 +21,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.lang.reflect.Array;
 import java.sql.Time;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
@@ -50,8 +54,9 @@ public class HomeFragment extends Fragment implements NoteInterface {
 
 
     HorizontalScrollView noteList;
-
     LinearLayout noteItems;
+
+    NoteInterface removeNote;
 
     //UI
     TextView homeText;
@@ -74,7 +79,9 @@ public class HomeFragment extends Fragment implements NoteInterface {
     // Timer & Auto refresh
     Timer weatherTimer;
 
+    // DB
     NoteDatabase db;
+    List<NoteData> noteAllItems;
 
     public NotifyMainActivity notifier;
 
@@ -86,8 +93,6 @@ public class HomeFragment extends Fragment implements NoteInterface {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       // task.delegate = this;
-
 
     }
 
@@ -157,12 +162,19 @@ public class HomeFragment extends Fragment implements NoteInterface {
             }// 3600000 ms = 1 hr
         }, 0, 3600000);
 
+
+
+        // DB
+        db = new NoteDatabase(getActivity());
+        noteAllItems  = new ArrayList<NoteData>();
+        noteAllItems = db.getAllNotes();
+        for(int i = 0; i < noteAllItems.size(); i++){
+            NoteButton newButton = new NoteButton(getActivity(), noteAllItems.get(i));
+            newButton.buttonListener = this;
+            noteItems.addView(newButton);
+        }
+
         return v;
-    }
-
-
-    public void setDBObject(NoteDatabase db){
-        this.db = db;
     }
 
 
@@ -175,13 +187,12 @@ public class HomeFragment extends Fragment implements NoteInterface {
 
                 homeText.setText(String.valueOf(data.temperature + "°C - Outside"));
                 homeTextDesc.setText(data.windDirection + "\n" + data.humidity);
-                setWeatherIcon(data.weatherIcon);
+                setWeatherIcon(data.weatherIcon, getActivity());
 
                 loadWindow.close();
             }
         });
     }
-
 
 
     public void getWeatherInformation(String xmlURL) {
@@ -237,31 +248,31 @@ public class HomeFragment extends Fragment implements NoteInterface {
     }
 
     // Sets weather icon
-    private void setWeatherIcon(TemperatureData.WeatherIcon weatherIcon) {
+    private void setWeatherIcon(TemperatureData.WeatherIcon weatherIcon, Context context) {
         switch (weatherIcon) {
             case Sunny:
-                weatherImg.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.sunny));
+                weatherImg.setBackground(ContextCompat.getDrawable(context, R.drawable.sunny));
                 break;
             case Rain:
-                weatherImg.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.drizzle));
+                weatherImg.setBackground(ContextCompat.getDrawable(context, R.drawable.drizzle));
                 break;
             case Cloudy:
-                weatherImg.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.cloudy));
+                weatherImg.setBackground(ContextCompat.getDrawable(context, R.drawable.cloudy));
                 break;
             case Haze:
-                weatherImg.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.haze));
+                weatherImg.setBackground(ContextCompat.getDrawable(context, R.drawable.haze));
                 break;
             case Mostly_Cloudy:
-                weatherImg.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.mostly_cloudy));
+                weatherImg.setBackground(ContextCompat.getDrawable(context, R.drawable.mostly_cloudy));
                 break;
             case Slight_Drizzle:
-                weatherImg.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.slight_drizzle));
+                weatherImg.setBackground(ContextCompat.getDrawable(context, R.drawable.slight_drizzle));
                 break;
             case Thunderstorm:
-                weatherImg.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.thunderstorms));
+                weatherImg.setBackground(ContextCompat.getDrawable(context, R.drawable.thunderstorms));
                 break;
             case Snow:
-                weatherImg.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.snow));
+                weatherImg.setBackground(ContextCompat.getDrawable(context, R.drawable.snow));
                 break;
         }
     }
@@ -269,7 +280,28 @@ public class HomeFragment extends Fragment implements NoteInterface {
     // Note data
     @Override
     public void newNote(NoteData data) {
-       noteItems.addView(new NoteButton(getActivity(), data));
+        // The new note & update the linear view
+        db.addNote(data);
+
+        rebuildNotes();
+    }
+
+    @Override
+    public void removeNote(NoteData data) {
+        db.removeNote(data);
+
+        rebuildNotes();
+
+    }
+
+    void rebuildNotes(){
+        noteItems.removeAllViews();
+        noteAllItems = db.getAllNotes();
+        for(int i = 0; i < noteAllItems.size(); i++){
+            NoteButton newButton = new NoteButton(getActivity(), noteAllItems.get(i));
+            newButton.buttonListener = this;
+            noteItems.addView(newButton);
+        }
     }
 }
 

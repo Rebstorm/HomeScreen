@@ -81,10 +81,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setSupportActionBar(toolbar);
         */
 
-
-        // DB
-        noteDatabase = new NoteDatabase(getApplicationContext());
-
         // Music Fragment
         musicFragment = new MusicFragment();
 
@@ -93,7 +89,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         homeFragment = new HomeFragment();
         xml.delegate = this;
         homeFragment.notifier = this;
-        homeFragment.setDBObject(noteDatabase);
 
         webFragment = new WebFragment();
 
@@ -175,8 +170,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             fragmentManager.beginTransaction().replace(R.id.content_main, musicFragment).commit();
         } else if (id == R.id.nav_home) {
             fragmentManager.beginTransaction().replace(R.id.content_main, homeFragment).commit();
-            if(data != null)
-                homeFragment.changeUIData(data);
         } else if (id == R.id.nav_web) {
             fragmentManager.beginTransaction().replace(R.id.content_main, webFragment).commit();
         } else if (id == R.id.nav_slideshow) {
@@ -207,7 +200,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void processFinished(String output) {
         // DL finished
         xml.getWeather(output);
-
     }
 
     @Override

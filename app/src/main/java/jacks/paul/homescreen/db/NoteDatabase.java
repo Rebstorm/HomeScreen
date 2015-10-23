@@ -108,13 +108,13 @@ public class NoteDatabase extends SQLiteOpenHelper {
         List<NoteData> allNotes = new ArrayList<NoteData>();
 
         String selectQuery = "SELECT * FROM " + NOTE_TABLE;
-
         Cursor cQuestion =  db.rawQuery(selectQuery, null);
 
         if(cQuestion.moveToFirst()){
 
             do {
                 NoteData data = new NoteData();
+                data.id = Integer.parseInt(cQuestion.getString(0));
                 data.header = cQuestion.getString(1);
                 data.text = cQuestion.getString(2);
 
@@ -128,9 +128,13 @@ public class NoteDatabase extends SQLiteOpenHelper {
                 allNotes.add(data);
             }while(cQuestion.moveToNext());
 
-
         }
         return  allNotes;
+    }
+
+    // Remove
+    public void removeNote(NoteData remove){
+        db.delete(NOTE_TABLE, ID +"=?", new String[]{String.valueOf(remove.id)});
     }
 
 

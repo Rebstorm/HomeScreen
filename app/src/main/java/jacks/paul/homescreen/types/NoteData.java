@@ -12,6 +12,8 @@ public class NoteData {
         Middle,
         Low
     }
+
+    public int id = 0;
     public String header = "";
     public String text = "";
     public Date expiryDate;
