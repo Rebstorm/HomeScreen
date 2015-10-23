@@ -29,7 +29,7 @@ public class NoteDatabase extends SQLiteOpenHelper {
     private static final String HEADER = "header";
     private static final String TEXT = "text";
     private static final String DATE = "date";
-    private static final String IMPORTANCE = "1";
+    private static final String IMPORTANCE = "importance";
 
     // DB
     SQLiteDatabase db;

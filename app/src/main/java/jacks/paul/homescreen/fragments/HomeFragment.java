@@ -1,5 +1,6 @@
 package jacks.paul.homescreen.fragments;
 
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -27,11 +28,14 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
+import jacks.paul.homescreen.MainActivity;
 import jacks.paul.homescreen.R;
 import jacks.paul.homescreen.adapters.AddDialogue;
 import jacks.paul.homescreen.adapters.LoadingDialogue;
 import jacks.paul.homescreen.adapters.NoteButton;
 import jacks.paul.homescreen.adapters.NoteInterface;
+import jacks.paul.homescreen.adapters.NotifyMainActivity;
+import jacks.paul.homescreen.db.NoteDatabase;
 import jacks.paul.homescreen.download.DownloadInterface;
 import jacks.paul.homescreen.download.DownloadWeather;
 import jacks.paul.homescreen.parsing.ParseWeather;
@@ -42,11 +46,8 @@ import jacks.paul.homescreen.types.TemperatureData;
 /*
        HOME FRAGMENT, CONTAINS WEATHER AND NOTES
  */
-public class HomeFragment extends Fragment implements DownloadInterface, WeatherInterface, NoteInterface {
+public class HomeFragment extends Fragment implements NoteInterface {
 
-
-    // DownloadWeather task = new DownloadWeather();
-    public ParseWeather xml = new ParseWeather();
 
     HorizontalScrollView noteList;
 
@@ -73,6 +74,11 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
     // Timer & Auto refresh
     Timer weatherTimer;
 
+    NoteDatabase db;
+
+    public NotifyMainActivity notifier;
+
+
     public HomeFragment() {
     }
 
@@ -81,7 +87,7 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
        // task.delegate = this;
-        xml.delegate = this;
+
 
     }
 
@@ -155,15 +161,12 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
     }
 
 
-
-    @Override
-    public void processFinished(String output) {
-        xml.getWeather(output);
+    public void setDBObject(NoteDatabase db){
+        this.db = db;
     }
 
-    @Override
-    public void dataReceived(final TemperatureData data) {
-        // The Dispatcher. LOL.
+
+    public void changeUIData(final TemperatureData data) {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -181,19 +184,16 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
 
 
 
-    public void getWeatherInformation(String xmlURL){
-        // This is fucking dirty, but since AsyncTasks can only be run once, you always
-        // have to make it new for each time. Which means I have to redefine the delegate/interface
-         DownloadWeather task = new DownloadWeather();
-        task.delegate = this;
-        task.execute(xmlURL);
-        animateWeatherUpdate();
+    public void getWeatherInformation(String xmlURL) {
+        // Feels dirty, but it sends it back to main Activity that then stores the data and gives it back to the fragment
+        if (notifier != null) {
+            notifier.beginDownload(xmlURL);
+            animateWeatherUpdate();
+        }
     }
-
 
     //Animation! WOAAH!
     void animateWeatherUpdate(){
-
         homeText.setText("Updating...");
 
         // Fade in
@@ -215,7 +215,6 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
             public void onAnimationStart(Animation animation) {
 
             }
-
             @Override
             public void onAnimationEnd(Animation animation) {
                 homeText.startAnimation(animation);
@@ -228,10 +227,6 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
         });
         homeText.startAnimation(animation);
         weatherImg.startAnimation(animation);
-
-
-
-
     }
 
     public void getDate(){
@@ -243,8 +238,6 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
 
     // Sets weather icon
     private void setWeatherIcon(TemperatureData.WeatherIcon weatherIcon) {
-
-
         switch (weatherIcon) {
             case Sunny:
                 weatherImg.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.sunny));
@@ -270,8 +263,6 @@ public class HomeFragment extends Fragment implements DownloadInterface, Weather
             case Snow:
                 weatherImg.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.snow));
                 break;
-
-
         }
     }
 

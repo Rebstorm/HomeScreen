@@ -22,17 +22,30 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import java.io.Serializable;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import jacks.paul.homescreen.adapters.NotifyMainActivity;
 import jacks.paul.homescreen.db.NoteDatabase;
+import jacks.paul.homescreen.download.DownloadInterface;
+import jacks.paul.homescreen.download.DownloadWeather;
 import jacks.paul.homescreen.fragments.HomeFragment;
 import jacks.paul.homescreen.fragments.MusicFragment;
 import jacks.paul.homescreen.fragments.WebFragment;
+import jacks.paul.homescreen.parsing.ParseWeather;
 import jacks.paul.homescreen.parsing.WeatherInterface;
 import jacks.paul.homescreen.types.TemperatureData;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, DownloadInterface, WeatherInterface, NotifyMainActivity {
+
+
+    // Delegates
+    public ParseWeather xml = new ParseWeather();
+
+    // Temp vars
+    TemperatureData data;
+
 
 
     // Sqlite DB
@@ -53,9 +66,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // NavDrawer
     DrawerLayout drawer;
 
-    TemperatureData data = new TemperatureData();
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,17 +74,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //Never sleep
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+
         // Toolbar
         /*
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         */
 
+
+        // DB
         noteDatabase = new NoteDatabase(getApplicationContext());
 
         // Music Fragment
         musicFragment = new MusicFragment();
+
+
+        // Home Fragment stuff
         homeFragment = new HomeFragment();
+        xml.delegate = this;
+        homeFragment.notifier = this;
+        homeFragment.setDBObject(noteDatabase);
+
         webFragment = new WebFragment();
 
         //Fragment manager
@@ -155,6 +175,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             fragmentManager.beginTransaction().replace(R.id.content_main, musicFragment).commit();
         } else if (id == R.id.nav_home) {
             fragmentManager.beginTransaction().replace(R.id.content_main, homeFragment).commit();
+            if(data != null)
+                homeFragment.changeUIData(data);
         } else if (id == R.id.nav_web) {
             fragmentManager.beginTransaction().replace(R.id.content_main, webFragment).commit();
         } else if (id == R.id.nav_slideshow) {
@@ -169,4 +191,36 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
+
+    /*
+    *
+    *        HOME FRAGMENT STUFF
+    *      - Persistency for when switching fragments
+    *
+    *
+    *
+    *
+     */
+
+
+    @Override
+    public void processFinished(String output) {
+        // DL finished
+        xml.getWeather(output);
+
+    }
+
+    @Override
+    public void dataReceived(TemperatureData data) {
+        // For when parsing is finished, set it to the ui.
+        homeFragment.changeUIData(data);
+        this.data = data;
+    }
+
+    @Override
+    public void beginDownload(String xmlURL) {
+        DownloadWeather task = new DownloadWeather();
+        task.delegate = this;
+        task.execute(xmlURL);
+    }
 }
