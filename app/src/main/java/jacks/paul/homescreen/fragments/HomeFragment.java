@@ -291,7 +291,6 @@ public class HomeFragment extends Fragment implements NoteInterface {
         db.removeNote(data);
 
         rebuildNotes();
-
     }
 
     void rebuildNotes(){

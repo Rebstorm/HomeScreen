@@ -82,14 +82,14 @@ public class NoteButton extends Button{
         this.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, "clicked button: " + data.id, Toast.LENGTH_LONG).show();
+                Toast.makeText(context, data.text, Toast.LENGTH_LONG).show();
             }
         });
 
         this.setOnLongClickListener(new OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                Toast.makeText(context, "clicked long listener, id: " + data.id, Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "Removed: " + data.header, Toast.LENGTH_LONG).show();
                 buttonListener.removeNote(data);
 
                 return true;
