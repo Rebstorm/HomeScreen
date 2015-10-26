@@ -194,9 +194,9 @@ public class ParseWeather {
 
             // TIME IS ALWAYS REPRESENTED AS SUCH: 2015-10-26T10:00:00Z .
             String runtime = longterm.getAttributes().item(1).getNodeValue();
-            runtime = runtime.substring(runtime.indexOf("T", runtime.indexOf("Z")));
+            runtime = runtime.substring(runtime.indexOf("T")+1, runtime.indexOf("Z"));
             String endtime = longterm.getAttributes().item(2).getNodeValue();
-            endtime = endtime.substring(endtime.indexOf("T"), endtime.indexOf("Z"));
+            endtime = endtime.substring(endtime.indexOf("T")+1, endtime.indexOf("Z"));
 
 
             if(longterm.getNodeType() == Node.ELEMENT_NODE){

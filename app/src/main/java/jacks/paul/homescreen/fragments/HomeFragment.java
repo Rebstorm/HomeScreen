@@ -28,6 +28,7 @@ import java.sql.Time;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Timer;
@@ -52,7 +53,7 @@ import jacks.paul.homescreen.types.TemperatureData;
 /*
        HOME FRAGMENT, CONTAINS WEATHER AND NOTES
  */
-public class HomeFragment extends Fragment implements NoteInterface {
+public class HomeFragment extends Fragment implements NoteInterface{
 
 
     HorizontalScrollView noteList;
@@ -80,6 +81,9 @@ public class HomeFragment extends Fragment implements NoteInterface {
 
     // Timer & Auto refresh
     Timer weatherTimer;
+
+    //isitNight?
+    Boolean isNight;
 
     // DB
     NoteDatabase db;
@@ -125,8 +129,6 @@ public class HomeFragment extends Fragment implements NoteInterface {
         // The HorizontalScrollView child (Holds the noteButtons)
         noteItems = (LinearLayout)v.findViewById(R.id.scroll_items);
 
-
-
         // The load animation window
         loadWindow = new LoadingDialogue(getActivity());
 
@@ -148,9 +150,10 @@ public class HomeFragment extends Fragment implements NoteInterface {
         fabRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                getDate();
                 Toast.makeText(getActivity(), "Updating weather information..", Toast.LENGTH_LONG).show();
                 getWeatherInformation("http://api.yr.no/weatherapi/locationforecast/1.9/?lat=50.9;lon=6.9");
-                getDate();
+
                 // Loading window
                 loadWindow.open();
 
@@ -165,8 +168,9 @@ public class HomeFragment extends Fragment implements NoteInterface {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        getWeatherInformation("http://api.yr.no/weatherapi/locationforecast/1.9/?lat=50.9;lon=6.9");
                         getDate();
+                        getWeatherInformation("http://api.yr.no/weatherapi/locationforecast/1.9/?lat=50.9;lon=6.9");
+
 
                     }
                 });
@@ -252,6 +256,15 @@ public class HomeFragment extends Fragment implements NoteInterface {
         DateFormat dateNow = new SimpleDateFormat("HH:mm, EEE, dd/MM - yyyy");
         Date currentTime = new Date();
 
+        Calendar cal = Calendar.getInstance();
+
+        if(cal.get(Calendar.HOUR_OF_DAY) < 6 || cal.get(Calendar.HOUR_OF_DAY) > 20)
+            isNight = true;
+        else
+            isNight = false;
+
+
+
         dateText.setText("Last updated: " + dateNow.format(currentTime));
     }
 
@@ -259,52 +272,95 @@ public class HomeFragment extends Fragment implements NoteInterface {
     private void setWeatherIcon(TemperatureData.WeatherIcon weatherIcon, Context context) {
         switch (weatherIcon) {
             case Sunny:
-                weatherImg.setBackground(ContextCompat.getDrawable(context, R.drawable.sunny));
+                if(isNight)
+                    weatherImg.setBackground(ContextCompat.getDrawable(context, R.drawable.sunny_night));
+                else
+                    weatherImg.setBackground(ContextCompat.getDrawable(context, R.drawable.sunny));
                 break;
             case LightRain:
-                weatherImg.setBackground(ContextCompat.getDrawable(context,R.drawable.lightrain));
+
+                if(isNight)
+                    weatherImg.setBackground(ContextCompat.getDrawable(context, R.drawable.lightrain_night));
+                else
+                    weatherImg.setBackground(ContextCompat.getDrawable(context,R.drawable.lightrain));
                 break;
             case Rain:
-                weatherImg.setBackground(ContextCompat.getDrawable(context, R.drawable.rain));
+                if(isNight)
+                    weatherImg.setBackground(ContextCompat.getDrawable(context, R.drawable.rain_night));
+                else
+                    weatherImg.setBackground(ContextCompat.getDrawable(context, R.drawable.rain));
                 break;
             case Cloudy:
-                weatherImg.setBackground(ContextCompat.getDrawable(context, R.drawable.cloudy));
+                if(isNight)
+                    weatherImg.setBackground(ContextCompat.getDrawable(context, R.drawable.cloudy_night));
+                else
+                    weatherImg.setBackground(ContextCompat.getDrawable(context, R.drawable.cloudy));
                 break;
             case LittleCloudy:
-                weatherImg.setBackground(ContextCompat.getDrawable(context,R.drawable.littlecloudy));
+                if(isNight)
+                    weatherImg.setBackground(ContextCompat.getDrawable(context, R.drawable.littlecloudy_night));
+                else
+                    weatherImg.setBackground(ContextCompat.getDrawable(context,R.drawable.littlecloudy));
                 break;
             case PartlyCloudy:
-                weatherImg.setBackground(ContextCompat.getDrawable(context,R.drawable.partlycloudy));
+                if(isNight)
+                    weatherImg.setBackground(ContextCompat.getDrawable(context,R.drawable.partlycloudy_night));
+                else
+                    weatherImg.setBackground(ContextCompat.getDrawable(context,R.drawable.partlycloudy));
                 break;
             case LightRainSun:
-                weatherImg.setBackground(ContextCompat.getDrawable(context,R.drawable.lightrainsun));
+                if(isNight)
+                    weatherImg.setBackground(ContextCompat.getDrawable(context,R.drawable.lightrain_night));
+                else
+                    weatherImg.setBackground(ContextCompat.getDrawable(context,R.drawable.lightrainsun));
                 break;
             case LightRainThunderstorm:
-                weatherImg.setBackground(ContextCompat.getDrawable(context,R.drawable.lightrainthunderstorm));
+                if(isNight)
+                    weatherImg.setBackground(ContextCompat.getDrawable(context,R.drawable.lightrainthunderstorm_night));
+                else
+                    weatherImg.setBackground(ContextCompat.getDrawable(context,R.drawable.lightrainthunderstorm));
                 break;
             case Sleet:
-                weatherImg.setBackground(ContextCompat.getDrawable(context,R.drawable.sleet));
+                if(isNight)
+                    weatherImg.setBackground(ContextCompat.getDrawable(context,R.drawable.sleet_night));
+                else
+                    weatherImg.setBackground(ContextCompat.getDrawable(context,R.drawable.sleet));
                 break;
             case SnowSun:
-                weatherImg.setBackground(ContextCompat.getDrawable(context,R.drawable.snowsun));
+                if(isNight)
+                    weatherImg.setBackground(ContextCompat.getDrawable(context,R.drawable.snow2_night));
+                else
+                    weatherImg.setBackground(ContextCompat.getDrawable(context,R.drawable.snowsun));
                 break;
             case Haze:
-                weatherImg.setBackground(ContextCompat.getDrawable(context, R.drawable.haze));
+                if(isNight)
+                    weatherImg.setBackground(ContextCompat.getDrawable(context, R.drawable.haze_night));
+                else
+                    weatherImg.setBackground(ContextCompat.getDrawable(context,R.drawable.haze));
                 break;
             case Mostly_Cloudy:
-                weatherImg.setBackground(ContextCompat.getDrawable(context, R.drawable.mostly_cloudy));
-                break;
-            case Slight_Drizzle:
-                weatherImg.setBackground(ContextCompat.getDrawable(context, R.drawable.slight_drizzle));
+                if(isNight)
+                    weatherImg.setBackground(ContextCompat.getDrawable(context,R.drawable.cloudy_night));
+                else
+                    weatherImg.setBackground(ContextCompat.getDrawable(context, R.drawable.cloudy));
                 break;
             case RainThunder:
-                weatherImg.setBackground(ContextCompat.getDrawable(context,R.drawable.rainthunder));
+                if(isNight)
+                    weatherImg.setBackground(ContextCompat.getDrawable(context,R.drawable.rainthunder_night));
+                else
+                    weatherImg.setBackground(ContextCompat.getDrawable(context,R.drawable.rainthunder));
                 break;
             case Thunderstorm:
-                weatherImg.setBackground(ContextCompat.getDrawable(context, R.drawable.thunderstorms));
+                if(isNight)
+                    weatherImg.setBackground(ContextCompat.getDrawable(context,R.drawable.thunderstorms));
+                else
+                    weatherImg.setBackground(ContextCompat.getDrawable(context, R.drawable.thunderstorms));
                 break;
             case Snow:
-                weatherImg.setBackground(ContextCompat.getDrawable(context, R.drawable.snow));
+                if(isNight)
+                    weatherImg.setBackground(ContextCompat.getDrawable(context,R.drawable.snowsun_night));
+                else
+                    weatherImg.setBackground(ContextCompat.getDrawable(context, R.drawable.snowsun));
                 break;
             case Dunno:
                 break;
@@ -316,14 +372,12 @@ public class HomeFragment extends Fragment implements NoteInterface {
     public void newNote(NoteData data) {
         // The new note & update the linear view
         db.addNote(data);
-
         rebuildNotes();
     }
 
     @Override
     public void removeNote(NoteData data) {
         db.removeNote(data);
-
         rebuildNotes();
     }
 
