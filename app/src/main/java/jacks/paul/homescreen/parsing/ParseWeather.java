@@ -46,6 +46,7 @@ public class ParseWeather {
 
             // Meta data
             NodeList metaNodes = xmlDoc.getElementsByTagName("time");
+
             // Weather data
             NodeList weatherDataNodes = xmlDoc.getElementsByTagName("location");
 
@@ -77,7 +78,7 @@ public class ParseWeather {
 
                 }
 
-            // YR.no does not tell you the symbol id for the current hour, so we will use the last hour.
+            // YR.no provided the weather data symbol in the next tag, therefore we're using it.
             Node symbolId = weatherDataNodes.item(1);
                 if (symbolId.getNodeType() == Node.ELEMENT_NODE) {
                     Element elements = (Element) symbolId;
@@ -93,37 +94,37 @@ public class ParseWeather {
                             data.weatherIcon = TemperatureData.WeatherIcon.Sunny;
                             break;
                         case 2:
-                            data.weatherIcon = TemperatureData.WeatherIcon.Mostly_Cloudy;
+                            data.weatherIcon = TemperatureData.WeatherIcon.LittleCloudy;
                             break;
                         case 3:
-                            data.weatherIcon = TemperatureData.WeatherIcon.Cloudy;
+                            data.weatherIcon = TemperatureData.WeatherIcon.PartlyCloudy;
                             break;
                         case 4:
                             data.weatherIcon = TemperatureData.WeatherIcon.Cloudy;
                             break;
                         case 5:
-                            data.weatherIcon = TemperatureData.WeatherIcon.Slight_Drizzle;
+                            data.weatherIcon = TemperatureData.WeatherIcon.LightRainSun;
                             break;
                         case 6:
-                            data.weatherIcon = TemperatureData.WeatherIcon.Thunderstorm;
+                            data.weatherIcon = TemperatureData.WeatherIcon.LightRainThunderstorm;
                             break;
                         case 7:
-                            data.weatherIcon = TemperatureData.WeatherIcon.Sunny;
+                            data.weatherIcon = TemperatureData.WeatherIcon.Sleet;
                             break;
                         case 8:
-                            data.weatherIcon = TemperatureData.WeatherIcon.Snow;
+                            data.weatherIcon = TemperatureData.WeatherIcon.SnowSun;
                             break;
                         case 9:
-                            data.weatherIcon = TemperatureData.WeatherIcon.Rain;
+                            data.weatherIcon = TemperatureData.WeatherIcon.LightRain;
                             break;
                         case 10:
                             data.weatherIcon = TemperatureData.WeatherIcon.Rain;
                             break;
                         case 11:
-                            data.weatherIcon = TemperatureData.WeatherIcon.Thunderstorm;
+                            data.weatherIcon = TemperatureData.WeatherIcon.RainThunder;
                             break;
                         case 12:
-                            data.weatherIcon = TemperatureData.WeatherIcon.Rain;
+                            data.weatherIcon = TemperatureData.WeatherIcon.Sleet;
                             break;
                         case 13:
                             data.weatherIcon = TemperatureData.WeatherIcon.Snow;
@@ -136,7 +137,7 @@ public class ParseWeather {
                             break;
 
                         default:
-                            data.weatherIcon = TemperatureData.WeatherIcon.Cloudy;
+                            data.weatherIcon = TemperatureData.WeatherIcon.Dunno;
                             break;
 
 
@@ -187,6 +188,24 @@ public class ParseWeather {
 
                     }
                 }
+
+            // The longterm forecasts - Sits in the 25th tag
+            Node longterm = metaNodes.item(24);
+
+            // TIME IS ALWAYS REPRESENTED AS SUCH: 2015-10-26T10:00:00Z .
+            String runtime = longterm.getAttributes().item(1).getNodeValue();
+            runtime = runtime.substring(runtime.indexOf("T", runtime.indexOf("Z")));
+            String endtime = longterm.getAttributes().item(2).getNodeValue();
+            endtime = endtime.substring(endtime.indexOf("T"), endtime.indexOf("Z"));
+
+
+            if(longterm.getNodeType() == Node.ELEMENT_NODE){
+                Element elements = (Element) longterm;
+
+
+
+            }
+
 
             delegate.dataReceived(data);
 

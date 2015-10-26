@@ -7,13 +7,23 @@ public class TemperatureData {
 
     public enum WeatherIcon{
         Sunny,
+        LightRain,
         Rain,
         Cloudy,
+        LittleCloudy,
+        PartlyCloudy,
+        LightRainSun,
+        LightRainThunderstorm,
+        Sleet,
+        SnowSun,
         Haze,
         Mostly_Cloudy,
         Slight_Drizzle,
+        RainThunder,
         Thunderstorm,
-        Snow
+        Snow,
+        Dunno
+
     }
 
     public double temperature = 0.0;

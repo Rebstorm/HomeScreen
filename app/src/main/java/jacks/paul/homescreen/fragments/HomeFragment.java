@@ -88,8 +88,8 @@ public class HomeFragment extends Fragment implements NoteInterface {
     public NotifyMainActivity notifier;
 
     // Typeface/Font
-    Typeface monoLight;
-    Typeface nuevo;
+    Typeface neouFat;
+    Typeface neou;
 
     public HomeFragment() {
     }
@@ -107,12 +107,15 @@ public class HomeFragment extends Fragment implements NoteInterface {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_home, container, false);
 
-        monoLight = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Starlight.ttf");
-        nuevo = Typeface.createFromAsset(getActivity().getAssets(), "fonts/NuevoDisco.ttf");
+        neouFat = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Neou-Bold.ttf");
+        neou = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Neou-Thin.ttf");
 
+        // TextViews
         homeText = (TextView)v.findViewById(R.id.home_text);
-        homeText.setTypeface(nuevo);
         homeTextDesc = (TextView)v.findViewById(R.id.home_text_desc);
+        dateText = (TextView)v.findViewById(R.id.date_text);
+        // Set fonts
+        setFontStyles();
 
         //WeatherIcon
         weatherImg = (ImageView) v.findViewById(R.id.weatherImage);
@@ -122,8 +125,7 @@ public class HomeFragment extends Fragment implements NoteInterface {
         // The HorizontalScrollView child (Holds the noteButtons)
         noteItems = (LinearLayout)v.findViewById(R.id.scroll_items);
 
-        // Current DateTime
-        dateText = (TextView)v.findViewById(R.id.date_text);
+
 
         // The load animation window
         loadWindow = new LoadingDialogue(getActivity());
@@ -176,6 +178,12 @@ public class HomeFragment extends Fragment implements NoteInterface {
         rebuildNotes();
 
         return v;
+    }
+
+    private void setFontStyles() {
+        homeText.setTypeface(neouFat);
+        homeTextDesc.setTypeface(neou);
+        dateText.setTypeface(neouFat);
     }
 
 
@@ -253,11 +261,32 @@ public class HomeFragment extends Fragment implements NoteInterface {
             case Sunny:
                 weatherImg.setBackground(ContextCompat.getDrawable(context, R.drawable.sunny));
                 break;
+            case LightRain:
+                weatherImg.setBackground(ContextCompat.getDrawable(context,R.drawable.lightrain));
+                break;
             case Rain:
-                weatherImg.setBackground(ContextCompat.getDrawable(context, R.drawable.drizzle));
+                weatherImg.setBackground(ContextCompat.getDrawable(context, R.drawable.rain));
                 break;
             case Cloudy:
                 weatherImg.setBackground(ContextCompat.getDrawable(context, R.drawable.cloudy));
+                break;
+            case LittleCloudy:
+                weatherImg.setBackground(ContextCompat.getDrawable(context,R.drawable.littlecloudy));
+                break;
+            case PartlyCloudy:
+                weatherImg.setBackground(ContextCompat.getDrawable(context,R.drawable.partlycloudy));
+                break;
+            case LightRainSun:
+                weatherImg.setBackground(ContextCompat.getDrawable(context,R.drawable.lightrainsun));
+                break;
+            case LightRainThunderstorm:
+                weatherImg.setBackground(ContextCompat.getDrawable(context,R.drawable.lightrainthunderstorm));
+                break;
+            case Sleet:
+                weatherImg.setBackground(ContextCompat.getDrawable(context,R.drawable.sleet));
+                break;
+            case SnowSun:
+                weatherImg.setBackground(ContextCompat.getDrawable(context,R.drawable.snowsun));
                 break;
             case Haze:
                 weatherImg.setBackground(ContextCompat.getDrawable(context, R.drawable.haze));
@@ -268,11 +297,16 @@ public class HomeFragment extends Fragment implements NoteInterface {
             case Slight_Drizzle:
                 weatherImg.setBackground(ContextCompat.getDrawable(context, R.drawable.slight_drizzle));
                 break;
+            case RainThunder:
+                weatherImg.setBackground(ContextCompat.getDrawable(context,R.drawable.rainthunder));
+                break;
             case Thunderstorm:
                 weatherImg.setBackground(ContextCompat.getDrawable(context, R.drawable.thunderstorms));
                 break;
             case Snow:
                 weatherImg.setBackground(ContextCompat.getDrawable(context, R.drawable.snow));
+                break;
+            case Dunno:
                 break;
         }
     }
