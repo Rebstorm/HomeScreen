@@ -258,7 +258,7 @@ public class HomeFragment extends Fragment implements NoteInterface{
 
         Calendar cal = Calendar.getInstance();
 
-        if(cal.get(Calendar.HOUR_OF_DAY) < 6 || cal.get(Calendar.HOUR_OF_DAY) > 20)
+        if(cal.get(Calendar.HOUR_OF_DAY) < 6 || cal.get(Calendar.HOUR_OF_DAY) > 19)
             isNight = true;
         else
             isNight = false;
