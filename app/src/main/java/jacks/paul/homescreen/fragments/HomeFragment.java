@@ -3,6 +3,7 @@ package jacks.paul.homescreen.fragments;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.design.widget.FloatingActionButton;
@@ -22,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Type;
 import java.sql.Time;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -85,11 +87,14 @@ public class HomeFragment extends Fragment implements NoteInterface {
 
     public NotifyMainActivity notifier;
 
+    // Typeface/Font
+    Typeface monoLight;
+    Typeface nuevo;
 
     public HomeFragment() {
     }
 
-    // TODO: Find out difference between onCreate & onCreateView.
+    // OnCreateView happens after OnCreate() - Therefore, I have decided its less important and more fragmenty.
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,7 +107,11 @@ public class HomeFragment extends Fragment implements NoteInterface {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_home, container, false);
 
+        monoLight = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Starlight.ttf");
+        nuevo = Typeface.createFromAsset(getActivity().getAssets(), "fonts/NuevoDisco.ttf");
+
         homeText = (TextView)v.findViewById(R.id.home_text);
+        homeText.setTypeface(nuevo);
         homeTextDesc = (TextView)v.findViewById(R.id.home_text_desc);
 
         //WeatherIcon
@@ -142,6 +151,7 @@ public class HomeFragment extends Fragment implements NoteInterface {
                 getDate();
                 // Loading window
                 loadWindow.open();
+
             }
         });
 
@@ -158,21 +168,12 @@ public class HomeFragment extends Fragment implements NoteInterface {
 
                     }
                 });
-
             }// 3600000 ms = 1 hr
         }, 0, 3600000);
 
-
-
         // DB
         db = new NoteDatabase(getActivity());
-        noteAllItems  = new ArrayList<NoteData>();
-        noteAllItems = db.getAllNotes();
-        for(int i = 0; i < noteAllItems.size(); i++){
-            NoteButton newButton = new NoteButton(getActivity(), noteAllItems.get(i));
-            newButton.buttonListener = this;
-            noteItems.addView(newButton);
-        }
+        rebuildNotes();
 
         return v;
     }
@@ -188,7 +189,6 @@ public class HomeFragment extends Fragment implements NoteInterface {
                 homeText.setText(String.valueOf(data.temperature + "°C - Outside"));
                 homeTextDesc.setText(data.windDirection + "\n" + data.humidity);
                 setWeatherIcon(data.weatherIcon, getActivity());
-
                 loadWindow.close();
             }
         });

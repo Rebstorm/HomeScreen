@@ -5,8 +5,6 @@
     tools:context="jacks.paul.homescreen.fragments.HomeFragment"
     android:layout_gravity="top">
 
-    <!-- TODO: Update blank fragment layout -->
-
     <ImageView
         android:id="@+id/weatherImage"
         android:layout_width="300dp"
