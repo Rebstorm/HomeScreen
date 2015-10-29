@@ -18,7 +18,10 @@
         android:backgroundTint="@android:color/secondary_text_light"
         app:itemIconTint="#FFFFFF"
         app:itemTextColor="#FFFFFF"
+        app:itemTextAppearance="@style/NavDrawerTextStyle"
         app:headerLayout="@layout/nav_header_main"
-        app:menu="@menu/activity_main_drawer" />
+        app:menu="@menu/activity_main_drawer"
+
+    />
 
 </android.support.v4.widget.DrawerLayout>

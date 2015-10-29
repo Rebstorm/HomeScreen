@@ -3,6 +3,8 @@ package jacks.paul.homescreen.adapters;
 import android.app.Dialog;
 import android.app.Fragment;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.view.Window;
 import android.widget.TextView;
 
@@ -22,6 +24,7 @@ public class LoadingDialogue {
 
         loadingDialogue = new Dialog(appContext);
         loadingDialogue.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        loadingDialogue.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         loadingDialogue.setContentView(R.layout.overlay_loadingscreen);
 
     }

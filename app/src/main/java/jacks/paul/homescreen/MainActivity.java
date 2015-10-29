@@ -20,6 +20,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
+import android.widget.GridView;
 
 import jacks.paul.homescreen.adapters.NotifyMainActivity;
 import jacks.paul.homescreen.db.NoteDatabase;
@@ -86,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         fab = (FloatingActionButton) findViewById(R.id.fabMenu);
-        fab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(getBaseContext(), R.color.gray )));
+        fab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(getBaseContext(), R.color.gray)));
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -149,7 +150,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         FragmentTransaction transactionFragment = getFragmentManager().beginTransaction();
 
         if (id == R.id.nav_light) {
-
             if(Build.VERSION.SDK_INT < 21) {
                 transactionFragment.setCustomAnimations(R.anim.enter_anim, R.anim.exit_anim);
             }else{
@@ -178,7 +178,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 homeFragment.setExitTransition(new Slide(Gravity.LEFT));
             }
             transactionFragment.replace(R.id.content_main, homeFragment).commit();
-
 
         } else if (id == R.id.nav_web) {
             fragmentManager.beginTransaction().replace(R.id.content_main, webFragment).commit();

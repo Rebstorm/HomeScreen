@@ -6,9 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.spotify.sdk.android.player.PlayerState;
+import com.philips.lighting.hue.sdk.PHHueSDK;
+import com.philips.lighting.model.PHBridge;
 
 import jacks.paul.homescreen.R;
+import jacks.paul.homescreen.hue.HueSharedPreferences;
 
 /**
  * Music Fragment, details from Spotify:
@@ -20,21 +22,22 @@ import jacks.paul.homescreen.R;
  */
 public class LightFragment extends Fragment{
 
+    private PHHueSDK phHueSDK;
+    private static final String TAG = "HueSDK";
+    private HueSharedPreferences preferences;
+
+    private boolean lastSearchWasIPScan = false;
 
 
     public LightFragment() {
         // Required empty public constructor
     }
 
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-    }
-
-    public void onResume(){
-        super.onResume();
-
 
     }
 
@@ -44,9 +47,28 @@ public class LightFragment extends Fragment{
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_light, container, false);
 
+        phHueSDK = PHHueSDK.create();
+
+
+
 
         return v;
 
     }
+
+    public void onResume(){
+        super.onResume();
+
+
+    }
+
+    void SetupBridge() {
+
+        PHBridge bridge = phHueSDK.getSelectedBridge();
+
+
+    }
+
+
 
 }
