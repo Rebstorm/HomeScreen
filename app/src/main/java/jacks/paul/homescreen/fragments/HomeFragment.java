@@ -85,6 +85,9 @@ public class HomeFragment extends Fragment implements NoteInterface{
     //isitNight?
     Boolean isNight;
 
+    // Using persistent data
+    boolean ranPreviously = false;
+
     // DB
     NoteDatabase db;
     List<NoteData> noteAllItems;
@@ -145,6 +148,21 @@ public class HomeFragment extends Fragment implements NoteInterface{
             }
         });
 
+
+        // Has it already been updated? If so, use that information instead
+        Bundle previousWeatherData = getArguments();
+        if(previousWeatherData != null) {
+            TemperatureData data = new TemperatureData();
+            data.temperature = previousWeatherData.getDouble("TempData");
+            data.humidity = previousWeatherData.getString("TempHum");
+            data.windDirection = previousWeatherData.getString("TempDir");
+            data.weatherIcon = (TemperatureData.WeatherIcon) previousWeatherData.getSerializable("TempIcon");
+            ranPreviously = true;
+
+            changeUIData(data);
+
+        }
+
         fabRefresh = (FloatingActionButton)v.findViewById(R.id.fabRefresh);
         fabRefresh.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(getActivity(), R.color.gray)));
         fabRefresh.setOnClickListener(new View.OnClickListener() {
@@ -152,7 +170,11 @@ public class HomeFragment extends Fragment implements NoteInterface{
             public void onClick(View v) {
                 getDate();
                 Toast.makeText(getActivity(), "Updating weather information..", Toast.LENGTH_LONG).show();
-                getWeatherInformation("http://api.yr.no/weatherapi/locationforecast/1.9/?lat=50.9;lon=6.9");
+
+                if(!ranPreviously)
+                    getWeatherInformation("http://api.yr.no/weatherapi/locationforecast/1.9/?lat=50.9;lon=6.9");
+                else
+                    ranPreviously = false;
 
                 // Loading window
                 loadWindow.open();
@@ -169,9 +191,10 @@ public class HomeFragment extends Fragment implements NoteInterface{
                     @Override
                     public void run() {
                         getDate();
-                        getWeatherInformation("http://api.yr.no/weatherapi/locationforecast/1.9/?lat=50.9;lon=6.9");
-
-
+                        if(!ranPreviously)
+                            getWeatherInformation("http://api.yr.no/weatherapi/locationforecast/1.9/?lat=50.9;lon=6.9");
+                        else
+                            ranPreviously = false;
                     }
                 });
             }// 3600000 ms = 1 hr
@@ -180,6 +203,8 @@ public class HomeFragment extends Fragment implements NoteInterface{
         // DB
         db = new NoteDatabase(getActivity());
         rebuildNotes();
+
+
 
         return v;
     }
@@ -336,7 +361,7 @@ public class HomeFragment extends Fragment implements NoteInterface{
                 if(isNight)
                     weatherImg.setBackground(ContextCompat.getDrawable(context, R.drawable.haze_night));
                 else
-                    weatherImg.setBackground(ContextCompat.getDrawable(context,R.drawable.haze));
+                    weatherImg.setBackground(ContextCompat.getDrawable(context,R.drawable.haze_night));
                 break;
             case Mostly_Cloudy:
                 if(isNight)

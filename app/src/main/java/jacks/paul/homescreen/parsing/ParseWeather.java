@@ -135,7 +135,6 @@ public class ParseWeather {
                         case 15:
                             data.weatherIcon = TemperatureData.WeatherIcon.Haze;
                             break;
-
                         default:
                             data.weatherIcon = TemperatureData.WeatherIcon.Dunno;
                             break;
@@ -185,7 +184,6 @@ public class ParseWeather {
                         50 HeavySnow
 
                          */
-
                     }
                 }
 

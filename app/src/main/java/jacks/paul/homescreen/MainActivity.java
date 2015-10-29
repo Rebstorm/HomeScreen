@@ -1,37 +1,25 @@
 package jacks.paul.homescreen;
 
-import android.app.Fragment;
 import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
-import android.view.Gravity;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Toast;
-
-import java.io.Serializable;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import jacks.paul.homescreen.adapters.NotifyMainActivity;
 import jacks.paul.homescreen.db.NoteDatabase;
 import jacks.paul.homescreen.download.DownloadInterface;
 import jacks.paul.homescreen.download.DownloadWeather;
 import jacks.paul.homescreen.fragments.HomeFragment;
-import jacks.paul.homescreen.fragments.MusicFragment;
+import jacks.paul.homescreen.fragments.LightFragment;
 import jacks.paul.homescreen.fragments.WebFragment;
 import jacks.paul.homescreen.parsing.ParseWeather;
 import jacks.paul.homescreen.parsing.WeatherInterface;
@@ -52,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public NoteDatabase noteDatabase;
 
     //Fragments
-    MusicFragment musicFragment;
+    LightFragment lightFragment;
     HomeFragment homeFragment;
     WebFragment webFragment;
 
@@ -75,8 +63,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         // Music Fragment
-        musicFragment = new MusicFragment();
-
+        lightFragment = new LightFragment();
 
         // Home Fragment stuff
         homeFragment = new HomeFragment();
@@ -154,10 +141,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_music) {
-            fragmentManager.beginTransaction().replace(R.id.content_main, musicFragment).commit();
+        if (id == R.id.nav_light) {
+            fragmentManager.beginTransaction().replace(R.id.content_main, lightFragment).commit();
         } else if (id == R.id.nav_home) {
+            // Sending data to next fragment
+            if(data != null) {
+                Bundle homeBundle = new Bundle();
+                homeBundle.putDouble("TempData", data.temperature);
+                homeBundle.putString("TempHum", data.humidity);
+                homeBundle.putString("TempDir", data.windDirection);
+                homeBundle.putSerializable("TempIcon", data.weatherIcon);
+
+                homeFragment.setArguments(homeBundle);
+            }
             fragmentManager.beginTransaction().replace(R.id.content_main, homeFragment).commit();
+
         } else if (id == R.id.nav_web) {
             fragmentManager.beginTransaction().replace(R.id.content_main, webFragment).commit();
         } else if (id == R.id.nav_slideshow) {

@@ -37,4 +37,8 @@ dependencies {
     // Spotify Playback
     compile 'com.spotify.sdk:spotify-player:1.0.0-beta11@aar'
 
+    //Hue sdk
+    compile files('libs/huelocalsdk.jar')
+    compile files('libs/huesdkrescoures.jar')
+
 }

@@ -94,6 +94,9 @@
     <orderEntry type="jdk" jdkName="Android API 23 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="spotify-player-1.0.0-beta11" level="project" />
+    <orderEntry type="library" exported="" name="huelocalsdk" level="project" />
+    <orderEntry type="library" exported="" name="huesdkrescoures" level="project" />
+    <orderEntry type="library" exported="" name="huesdkresources" level="project" />
     <orderEntry type="library" exported="" name="support-v4-23.0.1" level="project" />
     <orderEntry type="library" exported="" name="spotify-auth-1.0.0-beta11" level="project" />
     <orderEntry type="library" exported="" name="design-23.0.1" level="project" />
