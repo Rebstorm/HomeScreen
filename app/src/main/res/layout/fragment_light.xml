@@ -3,20 +3,6 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/spotifyText"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:text="Hello world"
-        android:textSize="24sp"/>
-    
-    <Button
-        android:id="@+id/spotifyLoginButton"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:text="Login"
-        />
-
     <ScrollView
         android:id="@+id/spotifyScroll"
         android:layout_width="match_parent"

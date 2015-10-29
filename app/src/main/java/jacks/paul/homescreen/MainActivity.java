@@ -1,10 +1,17 @@
 package jacks.paul.homescreen;
 
 import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.res.ColorStateList;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
+import android.transition.ArcMotion;
+import android.transition.Explode;
+import android.transition.Fade;
+import android.transition.Slide;
+import android.view.Gravity;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -112,7 +119,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
-
     /*
     Options Menu
      */
@@ -140,12 +146,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        FragmentTransaction transactionFragment = getFragmentManager().beginTransaction();
 
         if (id == R.id.nav_light) {
-            fragmentManager.beginTransaction().replace(R.id.content_main, lightFragment).commit();
+
+            if(Build.VERSION.SDK_INT < 21) {
+                transactionFragment.setCustomAnimations(R.anim.enter_anim, R.anim.exit_anim);
+            }else{
+                lightFragment.setEnterTransition(new Slide(Gravity.RIGHT));
+                lightFragment.setExitTransition(new Slide(Gravity.LEFT));
+            }
+            transactionFragment.replace(R.id.content_main, lightFragment).commit();
+
         } else if (id == R.id.nav_home) {
-            // Sending data to next fragment
-            if(data != null) {
+            // Sending data to home fragment fragment
+            if(data != null && !homeFragment.isVisible()) {
                 Bundle homeBundle = new Bundle();
                 homeBundle.putDouble("TempData", data.temperature);
                 homeBundle.putString("TempHum", data.humidity);
@@ -154,7 +169,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 homeFragment.setArguments(homeBundle);
             }
-            fragmentManager.beginTransaction().replace(R.id.content_main, homeFragment).commit();
+
+            // Transition & if API lvl is less than <21 it'll use a custm anim
+            if(Build.VERSION.SDK_INT < 21) {
+                transactionFragment.setCustomAnimations(R.anim.enter_anim, R.anim.exit_anim);
+            }else{
+                homeFragment.setEnterTransition(new Slide(Gravity.RIGHT));
+                homeFragment.setExitTransition(new Slide(Gravity.LEFT));
+            }
+            transactionFragment.replace(R.id.content_main, homeFragment).commit();
+
 
         } else if (id == R.id.nav_web) {
             fragmentManager.beginTransaction().replace(R.id.content_main, webFragment).commit();

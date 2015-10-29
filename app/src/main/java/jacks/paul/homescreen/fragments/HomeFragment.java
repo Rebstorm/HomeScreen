@@ -148,20 +148,7 @@ public class HomeFragment extends Fragment implements NoteInterface{
             }
         });
 
-
-        // Has it already been updated? If so, use that information instead
-        Bundle previousWeatherData = getArguments();
-        if(previousWeatherData != null) {
-            TemperatureData data = new TemperatureData();
-            data.temperature = previousWeatherData.getDouble("TempData");
-            data.humidity = previousWeatherData.getString("TempHum");
-            data.windDirection = previousWeatherData.getString("TempDir");
-            data.weatherIcon = (TemperatureData.WeatherIcon) previousWeatherData.getSerializable("TempIcon");
-            ranPreviously = true;
-
-            changeUIData(data);
-
-        }
+        getBundledArgs();
 
         fabRefresh = (FloatingActionButton)v.findViewById(R.id.fabRefresh);
         fabRefresh.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(getActivity(), R.color.gray)));
@@ -169,13 +156,7 @@ public class HomeFragment extends Fragment implements NoteInterface{
             @Override
             public void onClick(View v) {
                 getDate();
-                Toast.makeText(getActivity(), "Updating weather information..", Toast.LENGTH_LONG).show();
-
-                if(!ranPreviously)
-                    getWeatherInformation("http://api.yr.no/weatherapi/locationforecast/1.9/?lat=50.9;lon=6.9");
-                else
-                    ranPreviously = false;
-
+                weatherUpdate();
                 // Loading window
                 loadWindow.open();
 
@@ -191,10 +172,7 @@ public class HomeFragment extends Fragment implements NoteInterface{
                     @Override
                     public void run() {
                         getDate();
-                        if(!ranPreviously)
-                            getWeatherInformation("http://api.yr.no/weatherapi/locationforecast/1.9/?lat=50.9;lon=6.9");
-                        else
-                            ranPreviously = false;
+                        weatherUpdate();
                     }
                 });
             }// 3600000 ms = 1 hr
@@ -217,26 +195,20 @@ public class HomeFragment extends Fragment implements NoteInterface{
 
 
     public void changeUIData(final TemperatureData data) {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                // clear the animation
-                animation.setAnimationListener(null);
+        // Making sure the fragment exists.. So we dont get a NPE
+        if(getActivity() != null) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    // clear the animation
+                    animation.setAnimationListener(null);
 
-                homeText.setText(String.valueOf(data.temperature + "°C - Outside"));
-                homeTextDesc.setText(data.windDirection + "\n" + data.humidity);
-                setWeatherIcon(data.weatherIcon, getActivity());
-                loadWindow.close();
-            }
-        });
-    }
-
-
-    public void getWeatherInformation(String xmlURL) {
-        // Feels dirty, but it sends it back to main Activity that then stores the data and gives it back to the fragment
-        if (notifier != null) {
-            notifier.beginDownload(xmlURL);
-            animateWeatherUpdate();
+                    homeText.setText(String.valueOf(data.temperature + "°C - Outside"));
+                    homeTextDesc.setText(data.windDirection + "\n" + data.humidity);
+                    setWeatherIcon(data.weatherIcon, getActivity());
+                    loadWindow.close();
+                }
+            });
         }
     }
 
@@ -389,6 +361,39 @@ public class HomeFragment extends Fragment implements NoteInterface{
                 break;
             case Dunno:
                 break;
+        }
+    }
+
+    void weatherUpdate(){
+
+        if(!ranPreviously)
+            getWeatherInformation("http://api.yr.no/weatherapi/locationforecast/1.9/?lat=50.9;lon=6.9");
+        else
+            ranPreviously = false;
+
+    }
+
+    public void getWeatherInformation(String xmlURL) {
+        // Feels dirty, but it sends it back to main Activity that then stores the data and gives it back to the fragment
+        if (notifier != null) {
+            notifier.beginDownload(xmlURL);
+            animateWeatherUpdate();
+        }
+    }
+
+    // Gettings persistent data across fragmentation
+    public void getBundledArgs(){
+        // Has it already been updated? If so, use that information instead
+        Bundle previousWeatherData = getArguments();
+        if(previousWeatherData != null) {
+            TemperatureData data = new TemperatureData();
+            data.temperature = previousWeatherData.getDouble("TempData");
+            data.humidity = previousWeatherData.getString("TempHum");
+            data.windDirection = previousWeatherData.getString("TempDir");
+            data.weatherIcon = (TemperatureData.WeatherIcon) previousWeatherData.getSerializable("TempIcon");
+            ranPreviously = true;
+
+            changeUIData(data);
         }
     }
 
