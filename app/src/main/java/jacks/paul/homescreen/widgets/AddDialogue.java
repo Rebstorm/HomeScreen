@@ -1,4 +1,4 @@
-package jacks.paul.homescreen.adapters;
+package jacks.paul.homescreen.widgets;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.logging.SimpleFormatter;
 
 import jacks.paul.homescreen.R;
+import jacks.paul.homescreen.adapters.NoteInterface;
 import jacks.paul.homescreen.types.NoteData;
 
 /**

@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 
 import jacks.paul.homescreen.R;
-import jacks.paul.homescreen.adapters.WebStayView;
+import jacks.paul.homescreen.widgets.WebStayView;
 
 /**
  * Created by User on 2015-10-20.

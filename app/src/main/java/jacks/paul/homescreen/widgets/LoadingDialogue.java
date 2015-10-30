@@ -1,4 +1,4 @@
-package jacks.paul.homescreen.adapters;
+package jacks.paul.homescreen.widgets;
 
 import android.app.Dialog;
 import android.app.Fragment;

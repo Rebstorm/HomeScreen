@@ -4,8 +4,37 @@
     android:layout_height="match_parent">
 
     <ScrollView
-        android:id="@+id/spotifyScroll"
+        android:id="@+id/hueScroll"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:id="@+id/hueLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+
+             >
+
+            <TextView
+                android:id="@+id/hueTextDesc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/hueDesc"
+                android:textColor="@color/white"
+                android:background="@color/colorPrimaryDark"
+                android:textSize="24sp"
+                 />
+
+            <ListView
+                android:layout_below="@+id/hueTextDesc"
+                android:id="@+id/hueList"
+                android:layout_width="match_parent"
+                android:layout_height="400dp"
+                android:layout_alignParentBottom="true" />
+        </RelativeLayout>
+    </ScrollView>
+
+
 
 </LinearLayout>

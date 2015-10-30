@@ -1,16 +1,22 @@
 package jacks.paul.homescreen.fragments;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 import com.philips.lighting.hue.sdk.PHHueSDK;
 import com.philips.lighting.model.PHBridge;
 
+import java.util.ArrayList;
+
 import jacks.paul.homescreen.R;
+import jacks.paul.homescreen.adapters.HueBulbListAdapter;
 import jacks.paul.homescreen.hue.HueSharedPreferences;
+import jacks.paul.homescreen.types.HueData;
 
 /**
  * Music Fragment, details from Spotify:
@@ -28,11 +34,14 @@ public class LightFragment extends Fragment{
 
     private boolean lastSearchWasIPScan = false;
 
+    ListView hueBulbList;
+
+    ArrayList<HueData> data = new ArrayList<HueData>();
+
 
     public LightFragment() {
         // Required empty public constructor
     }
-
 
 
     @Override
@@ -47,8 +56,17 @@ public class LightFragment extends Fragment{
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_light, container, false);
 
-        phHueSDK = PHHueSDK.create();
+        //phHueSDK = PHHueSDK.create();
 
+
+        HueData newData = new HueData();
+        newData.name = "Boobies";
+        newData.color = Color.rgb(125,125,125);
+        data.add(newData);
+
+        hueBulbList = (ListView)v.findViewById(R.id.hueList);
+        HueBulbListAdapter adapter = new HueBulbListAdapter(getActivity(), data);
+        hueBulbList.setAdapter(adapter);
 
 
 
@@ -62,7 +80,7 @@ public class LightFragment extends Fragment{
 
     }
 
-    void SetupBridge() {
+    void setupBridge() {
 
         PHBridge bridge = phHueSDK.getSelectedBridge();
 

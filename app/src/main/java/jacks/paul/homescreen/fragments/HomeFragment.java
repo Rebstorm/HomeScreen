@@ -1,7 +1,6 @@
 package jacks.paul.homescreen.fragments;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -20,35 +19,24 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.Type;
-import java.sql.Time;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
 
-import jacks.paul.homescreen.MainActivity;
 import jacks.paul.homescreen.R;
-import jacks.paul.homescreen.adapters.AddDialogue;
-import jacks.paul.homescreen.adapters.LoadingDialogue;
-import jacks.paul.homescreen.adapters.NoteButton;
 import jacks.paul.homescreen.adapters.NoteInterface;
 import jacks.paul.homescreen.adapters.NotifyMainActivity;
 import jacks.paul.homescreen.db.NoteDatabase;
-import jacks.paul.homescreen.download.DownloadInterface;
-import jacks.paul.homescreen.download.DownloadWeather;
-import jacks.paul.homescreen.parsing.ParseWeather;
-import jacks.paul.homescreen.parsing.WeatherInterface;
 import jacks.paul.homescreen.types.NoteData;
 import jacks.paul.homescreen.types.TemperatureData;
+import jacks.paul.homescreen.widgets.AddDialogue;
+import jacks.paul.homescreen.widgets.LoadingDialogue;
+import jacks.paul.homescreen.widgets.NoteButton;
 
 /*
        HOME FRAGMENT, CONTAINS WEATHER AND NOTES
@@ -349,9 +337,9 @@ public class HomeFragment extends Fragment implements NoteInterface{
                 break;
             case Thunderstorm:
                 if(isNight)
-                    weatherImg.setBackground(ContextCompat.getDrawable(context,R.drawable.thunderstorms));
+                    weatherImg.setBackground(ContextCompat.getDrawable(context,R.drawable.lightrainthunderstorm_night));
                 else
-                    weatherImg.setBackground(ContextCompat.getDrawable(context, R.drawable.thunderstorms));
+                    weatherImg.setBackground(ContextCompat.getDrawable(context, R.drawable.thunderstorm));
                 break;
             case Snow:
                 if(isNight)
