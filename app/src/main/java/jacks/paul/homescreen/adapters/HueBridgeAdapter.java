@@ -26,7 +26,7 @@ import jacks.paul.homescreen.R;
 import jacks.paul.homescreen.hue.HueInterface;
 import jacks.paul.homescreen.types.HueData;
 
-public class HueBulbListAdapter extends BaseAdapter {
+public class HueBridgeAdapter extends BaseAdapter {
 
     private LayoutInflater mInflater;
     List<PHAccessPoint> data;
@@ -42,7 +42,7 @@ public class HueBulbListAdapter extends BaseAdapter {
 
     public HueInterface conHueInterface = null;
 
-    public HueBulbListAdapter(Context context, List<PHAccessPoint> accessPointList) {
+    public HueBridgeAdapter(Context context, List<PHAccessPoint> accessPointList) {
         mInflater = LayoutInflater.from(context);
 
         this.data = accessPointList;
@@ -80,7 +80,7 @@ public class HueBulbListAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 Toast.makeText(context, "Connecting to Hue", Toast.LENGTH_LONG).show();
-                conHueInterface.ConnectAP(cData);
+                conHueInterface.connectAP(cData);
 
             }
         });
@@ -95,7 +95,10 @@ public class HueBulbListAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return data.size();
+        if(data!=null)
+            return data.size();
+        else
+            return 0;
     }
 
     @Override
@@ -112,6 +115,7 @@ public class HueBulbListAdapter extends BaseAdapter {
     public  void updateData(List<PHAccessPoint> accesspoints){
         this.data = accesspoints;
         notifyDataSetChanged();
+        notifyDataSetInvalidated();
 
     }
 } 

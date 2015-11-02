@@ -2,16 +2,11 @@ package jacks.paul.homescreen;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
-import android.transition.ArcMotion;
-import android.transition.Explode;
-import android.transition.Fade;
 import android.transition.Slide;
 import android.util.Log;
 import android.view.Gravity;
@@ -23,7 +18,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
-import android.widget.GridView;
 import android.widget.Toast;
 
 import com.philips.lighting.hue.sdk.PHAccessPoint;
@@ -35,11 +29,8 @@ import com.philips.lighting.model.PHBridge;
 import com.philips.lighting.model.PHHueError;
 import com.philips.lighting.model.PHHueParsingError;
 
-import java.io.Serializable;
 import java.util.List;
 
-import jacks.paul.homescreen.adapters.HueBulbListAdapter;
-import jacks.paul.homescreen.adapters.NoteInterface;
 import jacks.paul.homescreen.adapters.NotifyMainActivity;
 import jacks.paul.homescreen.db.NoteDatabase;
 import jacks.paul.homescreen.download.DownloadInterface;
@@ -47,12 +38,12 @@ import jacks.paul.homescreen.download.DownloadWeather;
 import jacks.paul.homescreen.fragments.HomeFragment;
 import jacks.paul.homescreen.fragments.LightFragment;
 import jacks.paul.homescreen.fragments.WebFragment;
-import jacks.paul.homescreen.hue.HueInterface;
 import jacks.paul.homescreen.hue.HueSharedPreferences;
 import jacks.paul.homescreen.hue.PHWizardAlertDialog;
 import jacks.paul.homescreen.parsing.ParseWeather;
 import jacks.paul.homescreen.parsing.WeatherInterface;
 import jacks.paul.homescreen.types.TemperatureData;
+import jacks.paul.homescreen.widgets.AuthDialogue;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, DownloadInterface, WeatherInterface, NotifyMainActivity {
 
@@ -87,6 +78,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     // NavDrawer
     DrawerLayout drawer;
+
+    // Dialog
+    AuthDialogue dialogue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,6 +121,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         // HUE Setup
         setupHUE();
+
+
 
 
     }
@@ -177,6 +173,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // Local SDK Listener
     private PHSDKListener listener = new PHSDKListener() {
 
+
+
         @Override
         public void onAccessPointsFound(List<PHAccessPoint> accessPoint) {
             // If bridges were found..
@@ -203,18 +201,34 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         @Override
         public void onBridgeConnected(PHBridge b, String username) {
+
+            MainActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getApplicationContext(), "Connected to bridge", Toast.LENGTH_LONG).show();
+                    if(dialogue != null)
+                        dialogue.close();
+                }
+            });
+
+            lightFragment.updateHueBridge(b);
+
             phHueSDK.setSelectedBridge(b);
             phHueSDK.enableHeartbeat(b, PHHueSDK.HB_INTERVAL);
             phHueSDK.getLastHeartbeat().put(b.getResourceCache().getBridgeConfiguration().getIpAddress(), System.currentTimeMillis());
             preferences.setLastConnectedIPAddress(b.getResourceCache().getBridgeConfiguration().getIpAddress());
             preferences.setUsername(username);
-            PHWizardAlertDialog.getInstance().closeProgressDialog();
         }
 
         @Override
+        // AUTHENTICATION WILL BE REQUIRED THROUGH A PUSH BUTTON
         public void onAuthenticationRequired(PHAccessPoint accessPoint) {
             Log.w(TAG, "Authentication Required.");
             phHueSDK.startPushlinkAuthentication(accessPoint);
+
+            dialogue = new AuthDialogue(getApplicationContext());
+            dialogue.open();
+
 
             //startActivity(new Intent(PHHomeActivity.this, PHPushlinkActivity.class));
 
@@ -242,7 +256,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 phHueSDK.getDisconnectedAccessPoint().add(accessPoint);
             }
         }
-
         @Override
         public void onError(int code, final String message) {
             Log.e(TAG, "on Error Called : " + code + ":" + message);

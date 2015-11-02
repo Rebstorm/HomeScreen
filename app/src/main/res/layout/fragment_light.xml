@@ -30,8 +30,16 @@
                 android:layout_below="@+id/hueTextDesc"
                 android:id="@+id/hueList"
                 android:layout_width="match_parent"
-                android:layout_height="400dp"
-                android:layout_alignParentBottom="true" />
+                android:layout_height="200dp"
+                android:layout_alignParentBottom="false" />
+
+            <GridView
+                android:id="@+id/hueLampView"
+                android:columnWidth="90dp"
+                android:layout_width="match_parent"
+                android:layout_height="500dp"
+                android:layout_below="@id/hueList"
+                />
         </RelativeLayout>
     </ScrollView>
 
