@@ -2,20 +2,28 @@ package jacks.paul.homescreen.fragments;
 
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import com.philips.lighting.hue.listener.PHLightListener;
 import com.philips.lighting.hue.sdk.PHAccessPoint;
 import com.philips.lighting.hue.sdk.PHHueSDK;
 import com.philips.lighting.model.PHBridge;
+import com.philips.lighting.model.PHBridgeResource;
+import com.philips.lighting.model.PHHueError;
 import com.philips.lighting.model.PHLight;
+import com.philips.lighting.model.PHLightState;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 import jacks.paul.homescreen.R;
 import jacks.paul.homescreen.adapters.HueBridgeAdapter;
@@ -111,27 +119,46 @@ public class LightFragment extends Fragment implements HueInterface{
         this.phBridge = phBridge;
         lights = phBridge.getResourceCache().getAllLights();
 
-        PHAccessPoint point = new PHAccessPoint();
-        point.setIpAddress("IP");
-        point.setUsername("Butthole");
-        point.setBridgeId("Butthole2");
-        point.setMacAddress("Yourmom");
-        bridgeList.add(point);
-        adapter.updateData(bridgeList);
-
-        ArrayList<String> lampnames = new ArrayList<String>();
+        Random random = new Random();
 
         for(PHLight phLight : lights){
-            lampnames.add(phLight.getName());
+            PHLightState lightState = new PHLightState();
+
+            lightState.setHue(random.nextInt(65535));
+            lightState.setBrightness(100);
+            phBridge.updateLightState(phLight, lightState, listener);
 
         }
 
-        gridAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, lampnames);
-        hueLightGrid.setAdapter(gridAdapter);
+
 
 
 
     }
+
+    PHLightListener listener = new PHLightListener() {
+
+        @Override
+        public void onSuccess() {
+        }
+
+        @Override
+        public void onStateUpdate(Map<String, String> arg0, List<PHHueError> arg1) {
+            Toast.makeText(getActivity(), "Lights have been updated", Toast.LENGTH_LONG).show();
+        }
+
+        @Override
+        public void onError(int arg0, String arg1) {}
+
+        @Override
+        public void onReceivingLightDetails(PHLight arg0) {}
+
+        @Override
+        public void onReceivingLights(List<PHBridgeResource> arg0) {}
+
+        @Override
+        public void onSearchComplete() {}
+    };
 
 
 

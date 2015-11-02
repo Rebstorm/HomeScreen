@@ -206,18 +206,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 @Override
                 public void run() {
                     Toast.makeText(getApplicationContext(), "Connected to bridge", Toast.LENGTH_LONG).show();
-                    if(dialogue != null)
+                    if (dialogue != null)
                         dialogue.close();
                 }
             });
-
-            lightFragment.updateHueBridge(b);
 
             phHueSDK.setSelectedBridge(b);
             phHueSDK.enableHeartbeat(b, PHHueSDK.HB_INTERVAL);
             phHueSDK.getLastHeartbeat().put(b.getResourceCache().getBridgeConfiguration().getIpAddress(), System.currentTimeMillis());
             preferences.setLastConnectedIPAddress(b.getResourceCache().getBridgeConfiguration().getIpAddress());
             preferences.setUsername(username);
+
+
+            lightFragment.updateHueBridge(b);
+
         }
 
         @Override
