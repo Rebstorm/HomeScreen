@@ -8,13 +8,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import com.philips.lighting.hue.sdk.PHAccessPoint;
 import com.philips.lighting.hue.sdk.PHHueSDK;
 import com.philips.lighting.model.PHBridge;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import jacks.paul.homescreen.MainActivity;
 import jacks.paul.homescreen.R;
 import jacks.paul.homescreen.adapters.HueBulbListAdapter;
+import jacks.paul.homescreen.hue.HueInterface;
 import jacks.paul.homescreen.hue.HueSharedPreferences;
 import jacks.paul.homescreen.types.HueData;
 
@@ -26,17 +30,14 @@ import jacks.paul.homescreen.types.HueData;
  * Im putting this on hiatus until I have the time and bother to figure out the authentication stuff in Spotify.
  *
  */
-public class LightFragment extends Fragment{
-
-    private PHHueSDK phHueSDK;
-    private static final String TAG = "HueSDK";
-    private HueSharedPreferences preferences;
-
-    private boolean lastSearchWasIPScan = false;
+public class LightFragment extends Fragment implements HueInterface{
 
     ListView hueBulbList;
+    private List<PHAccessPoint> bridgeList;
+    HueBulbListAdapter adapter;
+    PHBridge phBridge;
+    private PHHueSDK phHueSDK;
 
-    ArrayList<HueData> data = new ArrayList<HueData>();
 
 
     public LightFragment() {
@@ -56,19 +57,15 @@ public class LightFragment extends Fragment{
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_light, container, false);
 
-        //phHueSDK = PHHueSDK.create();
+        getBundledArgs();
 
 
-        HueData newData = new HueData();
-        newData.name = "Boobies";
-        newData.color = Color.rgb(125,125,125);
-        data.add(newData);
+        adapter = new HueBulbListAdapter(getActivity(), bridgeList);
+        adapter.conHueInterface = this;
 
         hueBulbList = (ListView)v.findViewById(R.id.hueList);
-        HueBulbListAdapter adapter = new HueBulbListAdapter(getActivity(), data);
-        hueBulbList.setAdapter(adapter);
-
-
+        if(adapter != null)
+            hueBulbList.setAdapter(adapter);
 
         return v;
 
@@ -80,11 +77,25 @@ public class LightFragment extends Fragment{
 
     }
 
-    void setupBridge() {
-
-        PHBridge bridge = phHueSDK.getSelectedBridge();
+    private void getBundledArgs(){
 
 
+    }
+
+    public void setupAdapter(List<PHAccessPoint> list, PHHueSDK phHueSDK){
+        this.phHueSDK = phHueSDK;
+        this.bridgeList = list;
+        if(hueBulbList != null) {
+            adapter = new HueBulbListAdapter(getActivity(), bridgeList);
+            hueBulbList.setAdapter(adapter);
+        }
+
+
+    }
+
+    @Override
+    public void ConnectAP(PHAccessPoint accessPoint) {
+        phHueSDK.connect(accessPoint);
     }
 
 

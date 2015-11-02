@@ -5,8 +5,8 @@
 
     <ImageView
         android:id="@+id/hue_icon"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
         android:layout_marginLeft="4px"
         android:layout_marginRight="10px"
         android:layout_marginTop="4px"
@@ -14,12 +14,22 @@
     </ImageView>
 
     <TextView
-        android:id="@+id/hue_text"
+        android:id="@+id/hue_ip"
         android:layout_toEndOf="@id/hue_icon"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Hello world"
         android:textSize="50dp" >
     </TextView>
+
+    <TextView
+        android:id="@+id/hue_mac"
+        android:layout_below="@id/hue_ip"
+        android:layout_toEndOf="@id/hue_icon"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="mac-address"
+        android:textSize="20sp"
+        />
 
 </RelativeLayout>

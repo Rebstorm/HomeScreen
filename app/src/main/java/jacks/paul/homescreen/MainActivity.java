@@ -2,15 +2,18 @@ package jacks.paul.homescreen;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.transition.ArcMotion;
 import android.transition.Explode;
 import android.transition.Fade;
 import android.transition.Slide;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -21,7 +24,22 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.GridView;
+import android.widget.Toast;
 
+import com.philips.lighting.hue.sdk.PHAccessPoint;
+import com.philips.lighting.hue.sdk.PHBridgeSearchManager;
+import com.philips.lighting.hue.sdk.PHHueSDK;
+import com.philips.lighting.hue.sdk.PHMessageType;
+import com.philips.lighting.hue.sdk.PHSDKListener;
+import com.philips.lighting.model.PHBridge;
+import com.philips.lighting.model.PHHueError;
+import com.philips.lighting.model.PHHueParsingError;
+
+import java.io.Serializable;
+import java.util.List;
+
+import jacks.paul.homescreen.adapters.HueBulbListAdapter;
+import jacks.paul.homescreen.adapters.NoteInterface;
 import jacks.paul.homescreen.adapters.NotifyMainActivity;
 import jacks.paul.homescreen.db.NoteDatabase;
 import jacks.paul.homescreen.download.DownloadInterface;
@@ -29,6 +47,9 @@ import jacks.paul.homescreen.download.DownloadWeather;
 import jacks.paul.homescreen.fragments.HomeFragment;
 import jacks.paul.homescreen.fragments.LightFragment;
 import jacks.paul.homescreen.fragments.WebFragment;
+import jacks.paul.homescreen.hue.HueInterface;
+import jacks.paul.homescreen.hue.HueSharedPreferences;
+import jacks.paul.homescreen.hue.PHWizardAlertDialog;
 import jacks.paul.homescreen.parsing.ParseWeather;
 import jacks.paul.homescreen.parsing.WeatherInterface;
 import jacks.paul.homescreen.types.TemperatureData;
@@ -36,13 +57,19 @@ import jacks.paul.homescreen.types.TemperatureData;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, DownloadInterface, WeatherInterface, NotifyMainActivity {
 
 
+    //Hue
+    private PHHueSDK phHueSDK;
+    private static final String TAG = "HueSDK";
+    private HueSharedPreferences preferences;
+    private boolean lastSearchWasIPScan = false;
+    private List<PHAccessPoint> bridgeList;
+    PHBridge phBridge;
+
     // Delegates
     public ParseWeather xml = new ParseWeather();
 
     // Temp vars
     TemperatureData data;
-
-
 
     // Sqlite DB
     public NoteDatabase noteDatabase;
@@ -54,7 +81,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     //Fragment Manager
     FragmentManager fragmentManager;
-
 
     //FABs
     FloatingActionButton fab;
@@ -97,7 +123,176 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
+        // HUE Setup
+        setupHUE();
+
+
     }
+
+    public void setupHUE(){
+        // Gets an instance of the Hue SDK.
+        phHueSDK = PHHueSDK.create();
+
+        // Set the Device Name (name of your app). This will be stored in your bridge whitelist entry.
+        phHueSDK.setAppName("HomeScreen");
+        phHueSDK.setDeviceName(android.os.Build.MODEL);
+
+
+        // Register the PHSDKListener to receive callbacks from the bridge.
+        phHueSDK.getNotificationManager().registerSDKListener(listener);
+
+        // Try to automatically connect to the last known bridge.  For first time use this will be empty so a bridge search is automatically started.
+        preferences = HueSharedPreferences.getInstance(getApplicationContext());
+        String lastIpAddress   = preferences.getLastConnectedIPAddress();
+        String lastUsername    = preferences.getUsername();
+
+        // Automatically try to connect to the last connected IP Address.  For multiple bridge support a different implementation is required.
+        if (lastIpAddress !=null && !lastIpAddress.equals("")) {
+            PHAccessPoint lastAccessPoint = new PHAccessPoint();
+            lastAccessPoint.setIpAddress(lastIpAddress);
+            lastAccessPoint.setUsername(lastUsername);
+
+            if (!phHueSDK.isAccessPointConnected(lastAccessPoint)) {
+                //PHWizardAlertDialog.getInstance().showProgressDialog(R.string.connecting, PHHomeActivity.this);
+                Toast.makeText(getApplicationContext(), "Connecting to bridge..", Toast.LENGTH_LONG).show();
+                phHueSDK.connect(lastAccessPoint);
+            }
+        }
+        else {  // First time use, so perform a bridge search.
+            doBridgeSearch();
+        }
+
+    }
+    public void doBridgeSearch() {
+        //PHWizardAlertDialog.getInstance().showProgressDialog(R.string.search_progress, PHHomeActivity.this);
+        Toast.makeText(getApplicationContext(), "Searching for bridge.. ", Toast.LENGTH_LONG).show();
+
+        PHBridgeSearchManager sm = (PHBridgeSearchManager) phHueSDK.getSDKService(PHHueSDK.SEARCH_BRIDGE);
+        // Start the UPNP Searching of local bridges.
+        sm.search(true, true);
+    }
+
+    // Local SDK Listener
+    private PHSDKListener listener = new PHSDKListener() {
+
+        @Override
+        public void onAccessPointsFound(List<PHAccessPoint> accessPoint) {
+            // If bridges were found..
+            if (accessPoint != null && accessPoint.size() > 0) {
+                phHueSDK.getAccessPointsFound().clear();
+                phHueSDK.getAccessPointsFound().addAll(accessPoint);
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        bridgeList = phHueSDK.getAccessPointsFound();
+                        lightFragment.setupAdapter(bridgeList, phHueSDK);
+                    }
+                });
+            }
+        }
+
+        @Override
+        // I have... no idea what this thing does..
+        public void onCacheUpdated(List<Integer> arg0, PHBridge bridge) {
+            Log.w(TAG, "On CacheUpdated");
+
+        }
+
+        @Override
+        public void onBridgeConnected(PHBridge b, String username) {
+            phHueSDK.setSelectedBridge(b);
+            phHueSDK.enableHeartbeat(b, PHHueSDK.HB_INTERVAL);
+            phHueSDK.getLastHeartbeat().put(b.getResourceCache().getBridgeConfiguration().getIpAddress(), System.currentTimeMillis());
+            preferences.setLastConnectedIPAddress(b.getResourceCache().getBridgeConfiguration().getIpAddress());
+            preferences.setUsername(username);
+            PHWizardAlertDialog.getInstance().closeProgressDialog();
+        }
+
+        @Override
+        public void onAuthenticationRequired(PHAccessPoint accessPoint) {
+            Log.w(TAG, "Authentication Required.");
+            phHueSDK.startPushlinkAuthentication(accessPoint);
+
+            //startActivity(new Intent(PHHomeActivity.this, PHPushlinkActivity.class));
+
+        }
+
+        @Override
+        public void onConnectionResumed(PHBridge bridge) {
+            if (MainActivity.this.isFinishing())
+                return;
+
+            Log.v(TAG, "onConnectionResumed" + bridge.getResourceCache().getBridgeConfiguration().getIpAddress());
+            phHueSDK.getLastHeartbeat().put(bridge.getResourceCache().getBridgeConfiguration().getIpAddress(), System.currentTimeMillis());
+            for (int i = 0; i < phHueSDK.getDisconnectedAccessPoint().size(); i++) {
+
+                if (phHueSDK.getDisconnectedAccessPoint().get(i).getIpAddress().equals(bridge.getResourceCache().getBridgeConfiguration().getIpAddress())) {
+                    phHueSDK.getDisconnectedAccessPoint().remove(i);
+                }
+            }
+
+        }
+        @Override
+        public void onConnectionLost(PHAccessPoint accessPoint) {
+            Log.v(TAG, "onConnectionLost : " + accessPoint.getIpAddress());
+            if (!phHueSDK.getDisconnectedAccessPoint().contains(accessPoint)) {
+                phHueSDK.getDisconnectedAccessPoint().add(accessPoint);
+            }
+        }
+
+        @Override
+        public void onError(int code, final String message) {
+            Log.e(TAG, "on Error Called : " + code + ":" + message);
+
+            if (code == PHHueError.NO_CONNECTION) {
+                Log.w(TAG, "On No Connection");
+            }
+            else if (code == PHHueError.AUTHENTICATION_FAILED || code== PHMessageType.PUSHLINK_AUTHENTICATION_FAILED) {
+                PHWizardAlertDialog.getInstance().closeProgressDialog();
+            }
+            else if (code == PHHueError.BRIDGE_NOT_RESPONDING) {
+                Log.w(TAG, "Bridge Not Responding . . . ");
+                PHWizardAlertDialog.getInstance().closeProgressDialog();
+                MainActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), "Bridge not responding..", Toast.LENGTH_LONG).show();
+                    }
+                });
+
+            }
+            else if (code == PHMessageType.BRIDGE_NOT_FOUND) {
+
+                if (!lastSearchWasIPScan) {  // Perform an IP Scan (backup mechanism) if UPNP and Portal Search fails.
+                    phHueSDK = PHHueSDK.getInstance();
+                    PHBridgeSearchManager sm = (PHBridgeSearchManager) phHueSDK.getSDKService(PHHueSDK.SEARCH_BRIDGE);
+                    sm.search(false, false, true);
+                    lastSearchWasIPScan=true;
+                }
+                else {
+                    PHWizardAlertDialog.getInstance().closeProgressDialog();
+                    MainActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                           Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+
+
+            }
+        }
+
+        @Override
+        public void onParsingErrors(List<PHHueParsingError> parsingErrorsList) {
+            for (PHHueParsingError parsingError: parsingErrorsList) {
+                Log.e(TAG, "ParsingError : " + parsingError.getMessage());
+            }
+        }
+    };
 
 
     /*
@@ -156,7 +351,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 lightFragment.setEnterTransition(new Slide(Gravity.RIGHT));
                 lightFragment.setExitTransition(new Slide(Gravity.LEFT));
             }
+            Bundle lightBundle = new Bundle();
+
             transactionFragment.replace(R.id.content_main, lightFragment).commit();
+
+
+
 
         } else if (id == R.id.nav_home) {
             // Sending data to home fragment fragment
@@ -224,4 +424,5 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         task.delegate = this;
         task.execute(xmlURL);
     }
+
 }
