@@ -270,11 +270,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
             else if (code == PHHueError.BRIDGE_NOT_RESPONDING) {
                 Log.w(TAG, "Bridge Not Responding . . . ");
-                PHWizardAlertDialog.getInstance().closeProgressDialog();
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(getApplicationContext(), "Bridge not responding..", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Bridge not responding..retrying", Toast.LENGTH_LONG).show();
+                        doBridgeSearch();
                     }
                 });
 

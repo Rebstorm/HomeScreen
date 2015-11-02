@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content" android:layout_height="match_parent"
+    android:layout_centerHorizontal="true">
+    
+    
+    <ImageView
+        android:id="@+id/hue_grid_icon"
+        android:layout_centerHorizontal="true"
+        android:layout_width="100dp"
+        android:layout_height="100dp" />
+    <TextView
+        android:id="@+id/hue_grid_text"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/hue_grid_icon"
+        android:textSize="40sp"
+        android:text="Hello world"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent" />
+
+</RelativeLayout>

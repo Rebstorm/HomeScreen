@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -27,7 +28,9 @@ import java.util.Random;
 
 import jacks.paul.homescreen.R;
 import jacks.paul.homescreen.adapters.HueBridgeAdapter;
+import jacks.paul.homescreen.adapters.HueGridAdapter;
 import jacks.paul.homescreen.hue.HueInterface;
+import jacks.paul.homescreen.types.HueData;
 
 /**
  * Music Fragment, details from Spotify:
@@ -41,20 +44,27 @@ public class LightFragment extends Fragment implements HueInterface{
 
     ListView hueBridgeList;
     GridView hueLightGrid;
+    Button hueOffButton;
 
     private List<PHAccessPoint> bridgeList;
     private List<PHLight> lights;
 
+    ArrayList<HueData> allData = new ArrayList<>();
+
     HueBridgeAdapter adapter;
-    ArrayAdapter<String> gridAdapter;
+    HueGridAdapter gridAdapter;
+
 
     PHBridge phBridge;
     private PHHueSDK phHueSDK;
 
 
 
+
+
     public LightFragment() {
         // Required empty public constructor
+
     }
 
 
@@ -72,9 +82,13 @@ public class LightFragment extends Fragment implements HueInterface{
 
         getBundledArgs();
 
+        getThemeList();
+
+        gridAdapter = new HueGridAdapter(getActivity(), allData);
+        gridAdapter.hueInterface = this;
+
         hueLightGrid = (GridView)v.findViewById(R.id.hueLampView);
         hueLightGrid.setAdapter(gridAdapter);
-
 
         adapter = new HueBridgeAdapter(getActivity(), bridgeList);
         adapter.conHueInterface = this;
@@ -82,8 +96,21 @@ public class LightFragment extends Fragment implements HueInterface{
         hueBridgeList = (ListView)v.findViewById(R.id.hueList);
         hueBridgeList.setAdapter(adapter);
 
-
-
+        hueOffButton = (Button)v.findViewById(R.id.hue_turn_off);
+        hueOffButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(phBridge != null && lights != null){
+                    for(int i = 0; i < lights.size(); i++) {
+                        PHLight phLight = lights.get(i);
+                        PHLightState lightState = new PHLightState();
+                        lightState.setOn(false);
+                        lightState.setBrightness(254);
+                        phBridge.updateLightState(phLight, lightState, listener);
+                    }
+                }
+            }
+        });
 
         return v;
 
@@ -91,6 +118,44 @@ public class LightFragment extends Fragment implements HueInterface{
 
     public void onResume(){
         super.onResume();
+
+
+    }
+
+    private void getThemeList(){
+
+        allData.clear();
+
+        //Hot
+        HueData themeHot = new HueData();
+        themeHot.themeName = "Warm";
+        themeHot.icon = R.drawable.theme_hot;
+        themeHot.colors.add(65280);
+        themeHot.colors.add(65280);
+        themeHot.colors.add(65280);
+
+        allData.add(themeHot);
+
+        //Cold
+        HueData themeCold = new HueData();
+        themeCold.themeName = "Cold";
+        themeCold.icon = R.drawable.dunno;
+        themeCold.colors.add(45600);
+        themeCold.colors.add(45600);
+        themeCold.colors.add(45600);
+
+        allData.add(themeCold);
+
+        // Green
+        HueData themeGreen = new HueData();
+        themeGreen.themeName = "Yellow";
+        themeGreen.icon = R.drawable.dunno;
+        themeGreen.colors.add(8000);
+        themeGreen.colors.add(8000);
+        themeGreen.colors.add(8000);
+
+        allData.add(themeGreen);
+
 
 
     }
@@ -114,26 +179,15 @@ public class LightFragment extends Fragment implements HueInterface{
         phHueSDK.connect(accessPoint);
     }
 
+    @Override
+    public void themeSelected(HueData theme) {
+        setTheme(theme);
+    }
+
 
     public void updateHueBridge(PHBridge phBridge){
         this.phBridge = phBridge;
         lights = phBridge.getResourceCache().getAllLights();
-
-        Random random = new Random();
-
-        for(PHLight phLight : lights){
-            PHLightState lightState = new PHLightState();
-
-            lightState.setHue(random.nextInt(65535));
-            lightState.setBrightness(100);
-            phBridge.updateLightState(phLight, lightState, listener);
-
-        }
-
-
-
-
-
     }
 
     PHLightListener listener = new PHLightListener() {
@@ -160,6 +214,31 @@ public class LightFragment extends Fragment implements HueInterface{
         public void onSearchComplete() {}
     };
 
+
+    private void setTheme(HueData theme) {
+
+        lights = phBridge.getResourceCache().getAllLights();
+
+        try {
+            for (int i = 0; i < theme.colors.size(); i++) {
+                PHLight phLight = lights.get(i);
+                PHLightState lightState = new PHLightState();
+
+                // Turn on if they're off
+                lightState.setOn(true);
+                lightState.setHue(theme.colors.get(i));
+                lightState.setBrightness(254);
+                phBridge.updateLightState(phLight, lightState, listener);
+
+            }
+        }catch(ArrayIndexOutOfBoundsException e){
+            Toast.makeText(getActivity(), "Oops! Too few lamps are reachable", Toast.LENGTH_LONG).show();
+        }
+
+
+
+
+    }
 
 
 }

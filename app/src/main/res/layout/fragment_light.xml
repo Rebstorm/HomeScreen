@@ -32,10 +32,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:layout_alignParentBottom="false" />
+            
+            <Button
+                android:id="@+id/hue_turn_off"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Shut off lamps"
+                android:gravity="right|bottom"
+                android:layout_above="@+id/hueLampView"
+                android:layout_alignParentEnd="true" />
 
             <GridView
                 android:id="@+id/hueLampView"
-                android:columnWidth="90dp"
+                android:numColumns="auto_fit"
                 android:layout_width="match_parent"
                 android:layout_height="500dp"
                 android:layout_below="@id/hueList"
