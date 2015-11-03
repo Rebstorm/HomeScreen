@@ -43,9 +43,8 @@ import jacks.paul.homescreen.widgets.AuthDialogue;
 import jacks.paul.homescreen.widgets.ConnectionDialog;
 
 /**
- * Music Fragment, details from Spotify:
  *
- * https://developer.spotify.com/my-applications/#!/applications/c30927946e87452e8101595852c75588
+ * Light Fragment - Let there be light!
  *
  * Im putting this on hiatus until I have the time and bother to figure out the authentication stuff in Spotify.
  *
