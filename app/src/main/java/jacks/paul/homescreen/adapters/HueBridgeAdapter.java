@@ -24,17 +24,20 @@ import java.util.List;
 
 import jacks.paul.homescreen.R;
 import jacks.paul.homescreen.hue.HueInterface;
+import jacks.paul.homescreen.types.HueConnectionData;
 import jacks.paul.homescreen.types.HueData;
+import jacks.paul.homescreen.widgets.ConnectionDialog;
 
 public class HueBridgeAdapter extends BaseAdapter {
 
     private LayoutInflater mInflater;
-    List<PHAccessPoint> data;
+    List<HueConnectionData> data;
 
     Context context;
 
     TextView hueIP;
     TextView hueMac;
+    ImageView hueIcon;
 
     // Typeface/Font
     Typeface neouFat;
@@ -42,7 +45,7 @@ public class HueBridgeAdapter extends BaseAdapter {
 
     public HueInterface conHueInterface = null;
 
-    public HueBridgeAdapter(Context context, List<PHAccessPoint> accessPointList) {
+    public HueBridgeAdapter(Context context, List<HueConnectionData> accessPointList) {
         mInflater = LayoutInflater.from(context);
 
         this.data = accessPointList;
@@ -68,25 +71,23 @@ public class HueBridgeAdapter extends BaseAdapter {
 
             hueMac = (TextView) convertView.findViewById(R.id.hue_mac);
             hueIP = (TextView) convertView.findViewById(R.id.hue_ip);
-            ImageView hueIcon = (ImageView) convertView.findViewById(R.id.hue_icon);
+            hueIcon = (ImageView) convertView.findViewById(R.id.hue_icon);
         }
 
-        final PHAccessPoint cData = data.get(position);
+        final PHAccessPoint cData = data.get(position).accessPoint;
 
-        hueIP.setText("IP: " + cData.getIpAddress() + " Username:" + cData.getUsername());
-        hueMac.setText("MAC-Address: " + cData.getMacAddress() + " Hue ID: " + cData.getBridgeId());
+        hueIP.setText("Click to pair");
+        hueMac.setText("IP: " + cData.getIpAddress() + " Username:" + cData.getUsername());
 
         hueIP.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, "Connecting to Hue", Toast.LENGTH_LONG).show();
                 conHueInterface.connectAP(cData);
-
             }
         });
 
         // Hue Icon color
-        //hueIcon.setBackgroundColor(data.get(position).color);
+        hueIcon.setBackgroundResource(R.drawable.pushlink_image);
 
         setFont();
 
@@ -113,7 +114,15 @@ public class HueBridgeAdapter extends BaseAdapter {
 
 
     public  void updateData(List<PHAccessPoint> accesspoints){
-        this.data = accesspoints;
+        ArrayList<HueConnectionData> convertedList = new ArrayList<>();
+        for(int i = 0; i < accesspoints.size(); i++){
+            HueConnectionData data = new HueConnectionData();
+            data.name = "Name";
+            data.accessPoint = accesspoints.get(i);
+            convertedList.add(data);
+        }
+        this.data = convertedList;
+
         notifyDataSetChanged();
         notifyDataSetInvalidated();
 

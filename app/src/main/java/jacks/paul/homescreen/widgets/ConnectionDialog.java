@@ -29,7 +29,7 @@ public class ConnectionDialog {
     Typeface neouFat;
     Typeface neou;
 
-    public ConnectionDialog(Context context, MainActivity activity, String message){
+    public ConnectionDialog(Context context, MainActivity activity, final String message){
         this.context = context;
         this.activity = activity;
         connDialog = new Dialog(context);
@@ -44,14 +44,23 @@ public class ConnectionDialog {
         noButton = (Button)connDialog.findViewById(R.id.connect_overlay_no_button);
 
         messageView = (TextView)connDialog.findViewById(R.id.connect_overlay_text);
-        messageView.setText(message);
+
+        if(message.equals("auth")){
+            messageView.setText("Press the Authentication button!");
+        }else{
+            messageView.setText(message);
+        }
         setFontStyles();
 
         yesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                doBridgeSearch();
-                connDialog.dismiss();
+                if(message.equals("auth")){
+                    connDialog.dismiss();
+                }else{
+                    doBridgeSearch();
+                    connDialog.dismiss();
+                }
             }
         });
 

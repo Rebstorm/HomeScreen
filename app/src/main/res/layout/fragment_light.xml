@@ -19,37 +19,74 @@
             <TextView
                 android:id="@+id/hueTextDesc"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="100dp"
                 android:text="@string/hueDesc"
                 android:textColor="@color/white"
-                android:background="@color/colorPrimaryDark"
-                android:textSize="24sp"
+                android:textSize="50sp"
                  />
 
             <ListView
-                android:layout_below="@+id/hueTextDesc"
                 android:id="@+id/hueList"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="100dp"
                 android:layout_alignParentBottom="false" />
             
+            
+
             <Button
                 android:id="@+id/hue_turn_off"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Shut off lamps"
                 android:gravity="right|bottom"
-                android:layout_above="@+id/hueLampView"
+                android:layout_below="@+id/hueTextDesc"
                 android:layout_alignParentEnd="true" />
+
+
+
+
+            <TextView
+                android:id="@+id/hue_gradientbar_text"
+                android:layout_below="@+id/hueTextDesc"
+                android:text="Brightness:"
+                android:textSize="24sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+
+            <SeekBar
+                android:id="@+id/hue_gradientbar"
+                android:layout_width="400dp"
+                android:layout_height="40dp"
+                android:progress="1"
+                android:max="254"
+                android:layout_alignTop="@+id/hue_gradientbar_text"
+                android:layout_toEndOf="@+id/hue_gradientbar_text" />
+            
+            <TextView
+                android:id="@+id/hue_gradient_text_progress"
+                android:layout_width="50dp"
+                android:layout_height="30dp"
+                android:layout_alignTop="@+id/hue_gradientbar_text"
+                android:text="100%"
+                android:layout_toEndOf="@+id/hue_gradientbar"/>
+
+            
+
+
+
+
 
             <GridView
                 android:id="@+id/hueLampView"
                 android:numColumns="6"
+                android:layout_marginTop="20dp"
                 android:animateLayoutChanges="true"
                 android:layout_width="match_parent"
                 android:layout_height="500dp"
-                android:layout_below="@id/hueList"
+                android:layout_below="@id/hue_gradientbar"
                 />
+
 
         </RelativeLayout>
     </ScrollView>

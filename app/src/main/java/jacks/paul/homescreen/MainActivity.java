@@ -80,8 +80,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // NavDrawer
     DrawerLayout drawer;
 
-    // Dialog
-    AuthDialogue dialogue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -202,13 +200,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         @Override
         public void onBridgeConnected(PHBridge b, String username) {
-
             MainActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     Toast.makeText(getApplicationContext(), "Connected to bridge", Toast.LENGTH_LONG).show();
-                    if (dialogue != null)
-                        dialogue.close();
                 }
             });
 
@@ -220,6 +215,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
             lightFragment.updateHueBridge(b);
+            lightFragment.connectionComplete();
 
         }
 
@@ -229,8 +225,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Log.w(TAG, "Authentication Required.");
             phHueSDK.startPushlinkAuthentication(accessPoint);
 
-            dialogue = new AuthDialogue(MainActivity.this);
-            dialogue.open();
+            ConnectionDialog dialog = new ConnectionDialog(MainActivity.this, MainActivity.this, "auth");
+            dialog.open();
 
         }
 
@@ -247,6 +243,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     phHueSDK.getDisconnectedAccessPoint().remove(i);
                 }
             }
+            lightFragment.updateHueBridge(bridge);
 
         }
         @Override

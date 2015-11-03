@@ -11,4 +11,5 @@ public interface HueInterface {
         void connectAP(PHAccessPoint accessPoint);
 
         void themeSelected(HueData theme);
+
 }
