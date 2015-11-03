@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.philips.lighting.hue.listener.PHLightListener;
 import com.philips.lighting.hue.sdk.PHAccessPoint;
@@ -29,6 +30,7 @@ import java.util.Random;
 import jacks.paul.homescreen.R;
 import jacks.paul.homescreen.adapters.HueBridgeAdapter;
 import jacks.paul.homescreen.adapters.HueGridAdapter;
+import jacks.paul.homescreen.hue.ColorPicker;
 import jacks.paul.homescreen.hue.HueInterface;
 import jacks.paul.homescreen.types.HueData;
 
@@ -57,9 +59,6 @@ public class LightFragment extends Fragment implements HueInterface{
 
     PHBridge phBridge;
     private PHHueSDK phHueSDK;
-
-
-
 
 
     public LightFragment() {
@@ -119,45 +118,12 @@ public class LightFragment extends Fragment implements HueInterface{
     public void onResume(){
         super.onResume();
 
-
     }
 
     private void getThemeList(){
-
         allData.clear();
-
-        //Hot
-        HueData themeHot = new HueData();
-        themeHot.themeName = "Warm";
-        themeHot.icon = R.drawable.theme_hot;
-        themeHot.colors.add(65280);
-        themeHot.colors.add(65280);
-        themeHot.colors.add(65280);
-
-        allData.add(themeHot);
-
-        //Cold
-        HueData themeCold = new HueData();
-        themeCold.themeName = "Cold";
-        themeCold.icon = R.drawable.dunno;
-        themeCold.colors.add(45600);
-        themeCold.colors.add(45600);
-        themeCold.colors.add(45600);
-
-        allData.add(themeCold);
-
-        // Green
-        HueData themeGreen = new HueData();
-        themeGreen.themeName = "Yellow";
-        themeGreen.icon = R.drawable.dunno;
-        themeGreen.colors.add(8000);
-        themeGreen.colors.add(8000);
-        themeGreen.colors.add(8000);
-
-        allData.add(themeGreen);
-
-
-
+        ColorPicker colors = new ColorPicker();
+        allData.addAll(colors.getAllThemes());
     }
 
     private void getBundledArgs(){
@@ -217,28 +183,26 @@ public class LightFragment extends Fragment implements HueInterface{
 
     private void setTheme(HueData theme) {
 
-        lights = phBridge.getResourceCache().getAllLights();
-
         try {
-            for (int i = 0; i < theme.colors.size(); i++) {
-                PHLight phLight = lights.get(i);
-                PHLightState lightState = new PHLightState();
+            lights = phBridge.getResourceCache().getAllLights();
+                for (int i = 0; i < theme.colors.size(); i++) {
+                    PHLight phLight = lights.get(i);
+                    PHLightState lightState = phLight.getLastKnownLightState();
+                    if(!lightState.isOn())
+                        lightState.setOn(true);
+                    lightState.setHue(theme.colors.get(i));
+                    lightState.setBrightness(254);
+                    phBridge.updateLightState(phLight, lightState, listener);
 
-                // Turn on if they're off
-                lightState.setOn(true);
-                lightState.setHue(theme.colors.get(i));
-                lightState.setBrightness(254);
-                phBridge.updateLightState(phLight, lightState, listener);
-
-            }
-        }catch(ArrayIndexOutOfBoundsException e){
+                }
+        }catch(ArrayIndexOutOfBoundsException e) {
             Toast.makeText(getActivity(), "Oops! Too few lamps are reachable", Toast.LENGTH_LONG).show();
+        }catch(NullPointerException e){
+
         }
 
-
-
-
     }
+
 
 
 }

@@ -59,8 +59,8 @@ public class AddDialogue extends Dialog {
         seeker.setProgressDrawable(getContext().getDrawable(R.drawable.overlay_seeker_bar));
 
 
-                // Canceable.
-                addWindow.setCancelable(false);
+        // Canceable.
+        addWindow.setCancelable(false);
 
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override

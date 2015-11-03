@@ -44,11 +44,13 @@
 
             <GridView
                 android:id="@+id/hueLampView"
-                android:numColumns="auto_fit"
+                android:numColumns="6"
+                android:animateLayoutChanges="true"
                 android:layout_width="match_parent"
                 android:layout_height="500dp"
                 android:layout_below="@id/hueList"
                 />
+
         </RelativeLayout>
     </ScrollView>
 

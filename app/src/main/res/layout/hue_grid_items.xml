@@ -13,7 +13,7 @@
         android:id="@+id/hue_grid_text"
         android:layout_centerHorizontal="true"
         android:layout_below="@id/hue_grid_icon"
-        android:textSize="40sp"
+        android:textSize="26sp"
         android:text="Hello world"
         android:layout_width="wrap_content"
         android:layout_height="match_parent" />

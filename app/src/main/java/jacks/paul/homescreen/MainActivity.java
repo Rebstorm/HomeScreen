@@ -44,6 +44,7 @@ import jacks.paul.homescreen.parsing.ParseWeather;
 import jacks.paul.homescreen.parsing.WeatherInterface;
 import jacks.paul.homescreen.types.TemperatureData;
 import jacks.paul.homescreen.widgets.AuthDialogue;
+import jacks.paul.homescreen.widgets.ConnectionDialog;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, DownloadInterface, WeatherInterface, NotifyMainActivity {
 
@@ -162,8 +163,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
     public void doBridgeSearch() {
-        //PHWizardAlertDialog.getInstance().showProgressDialog(R.string.search_progress, PHHomeActivity.this);
-        Toast.makeText(getApplicationContext(), "Searching for bridge.. ", Toast.LENGTH_LONG).show();
+
+        Toast.makeText(getApplicationContext(), "Searching for hue..", Toast.LENGTH_SHORT).show();
 
         PHBridgeSearchManager sm = (PHBridgeSearchManager) phHueSDK.getSDKService(PHHueSDK.SEARCH_BRIDGE);
         // Start the UPNP Searching of local bridges.
@@ -228,11 +229,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Log.w(TAG, "Authentication Required.");
             phHueSDK.startPushlinkAuthentication(accessPoint);
 
-            dialogue = new AuthDialogue(getApplicationContext());
+            dialogue = new AuthDialogue(MainActivity.this);
             dialogue.open();
-
-
-            //startActivity(new Intent(PHHomeActivity.this, PHPushlinkActivity.class));
 
         }
 
@@ -263,13 +261,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Log.e(TAG, "on Error Called : " + code + ":" + message);
 
             if (code == PHHueError.NO_CONNECTION) {
-                Log.w(TAG, "On No Connection");
+                ConnectionDialog dia = new ConnectionDialog(MainActivity.this, MainActivity.this, message + ".\n Try again?");
+                dia.open();
             }
             else if (code == PHHueError.AUTHENTICATION_FAILED || code== PHMessageType.PUSHLINK_AUTHENTICATION_FAILED) {
-                PHWizardAlertDialog.getInstance().closeProgressDialog();
+                ConnectionDialog dia = new ConnectionDialog(MainActivity.this, MainActivity.this, message + ".\n Try again?");
+                dia.open();
             }
             else if (code == PHHueError.BRIDGE_NOT_RESPONDING) {
-                Log.w(TAG, "Bridge Not Responding . . . ");
+                Log.w(TAG, "Bridge Not Responding . ");
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -277,10 +277,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         doBridgeSearch();
                     }
                 });
-
             }
             else if (code == PHMessageType.BRIDGE_NOT_FOUND) {
-
                 if (!lastSearchWasIPScan) {  // Perform an IP Scan (backup mechanism) if UPNP and Portal Search fails.
                     phHueSDK = PHHueSDK.getInstance();
                     PHBridgeSearchManager sm = (PHBridgeSearchManager) phHueSDK.getSDKService(PHHueSDK.SEARCH_BRIDGE);
@@ -292,7 +290,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     MainActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                           Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+                            // Context has to be set to class because otherwise it refers to weird token issue - I dont get it.
+                            ConnectionDialog dia = new ConnectionDialog(MainActivity.this, MainActivity.this , message + ".\nTry again?");
+                            dia.open();
                         }
                     });
                 }
