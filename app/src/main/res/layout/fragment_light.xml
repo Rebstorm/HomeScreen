@@ -35,14 +35,15 @@
 
             <Button
                 android:id="@+id/hue_turn_off"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="150dp"
+                android:layout_height="50dp"
+                android:background="@drawable/buttonbg"
+                android:textAlignment="center"
                 android:text="Shut off lamps"
+                android:textColor="@android:color/white"
                 android:gravity="right|bottom"
                 android:layout_below="@+id/hueTextDesc"
                 android:layout_alignParentEnd="true" />
-
-
 
 
             <TextView

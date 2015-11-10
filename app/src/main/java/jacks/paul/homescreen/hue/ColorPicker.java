@@ -1,9 +1,6 @@
 package jacks.paul.homescreen.hue;
 
-import android.graphics.Color;
-
 import java.util.ArrayList;
-import java.util.List;
 
 import jacks.paul.homescreen.R;
 import jacks.paul.homescreen.types.HueData;
@@ -59,6 +56,76 @@ public class ColorPicker {
         testcolor1.colors.add(1000);
 
         allItems.add(testcolor1);
+
+
+        HueData testcolor2 = new HueData();
+        testcolor2.themeName = "test2";
+        testcolor2.icon = R.drawable.dunno;
+        testcolor2.colors.add(2000);
+        testcolor2.colors.add(2000);
+        testcolor2.colors.add(2000);
+
+        allItems.add(testcolor2);
+
+
+        HueData testcolor3 = new HueData();
+        testcolor3.themeName = "test3";
+        testcolor3.icon = R.drawable.dunno;
+        testcolor3.colors.add(3000);
+        testcolor3.colors.add(3000);
+        testcolor3.colors.add(3000);
+
+        allItems.add(testcolor3);
+
+
+        HueData testcolor4 = new HueData();
+        testcolor4.themeName = "test4";
+        testcolor4.icon = R.drawable.dunno;
+        testcolor4.colors.add(4000);
+        testcolor4.colors.add(4000);
+        testcolor4.colors.add(4000);
+
+        allItems.add(testcolor4);
+
+
+        HueData testcolor5 = new HueData();
+        testcolor5.themeName = "test5";
+        testcolor5.icon = R.drawable.dunno;
+        testcolor5.colors.add(5000);
+        testcolor5.colors.add(5000);
+        testcolor5.colors.add(5000);
+
+        allItems.add(testcolor5);
+
+
+        HueData testcolor6 = new HueData();
+        testcolor6.themeName = "test6";
+        testcolor6.icon = R.drawable.dunno;
+        testcolor6.colors.add(6000);
+        testcolor6.colors.add(6000);
+        testcolor6.colors.add(6000);
+
+        allItems.add(testcolor6);
+
+
+        HueData testcolor7 = new HueData();
+        testcolor7.themeName = "test7";
+        testcolor7.icon = R.drawable.dunno;
+        testcolor7.colors.add(7000);
+        testcolor7.colors.add(7000);
+        testcolor7.colors.add(7000);
+
+        allItems.add(testcolor7);
+
+
+        HueData testcolor8 = new HueData();
+        testcolor8.themeName = "test8";
+        testcolor8.icon = R.drawable.dunno;
+        testcolor8.colors.add(8000);
+        testcolor8.colors.add(8000);
+        testcolor8.colors.add(8000);
+
+        allItems.add(testcolor8);
 
 
 

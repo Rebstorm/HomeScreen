@@ -1,6 +1,9 @@
 package jacks.paul.homescreen.fragments;
 
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.util.Log;
@@ -108,7 +111,7 @@ public class LightFragment extends Fragment implements HueInterface{
         neou = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Neou-Thin.ttf");
 
         hueTitle = (TextView)v.findViewById(R.id.hueTextDesc);
-        hueTitle.setText("Hue (Connected)");
+        hueTitle.setText("Not connected");
 
         hueProgressText = (TextView)v.findViewById(R.id.hue_gradient_text_progress);
         hueProgressText.setText("");
@@ -118,7 +121,11 @@ public class LightFragment extends Fragment implements HueInterface{
         setFontStyles();
 
         hueBrightness = (SeekBar)v.findViewById(R.id.hue_gradientbar);
-        hueBrightness.setProgressDrawable(getActivity().getDrawable(R.drawable.overlay_seeker_bar));
+        if(Build.VERSION.SDK_INT > 20)
+            hueBrightness.setProgressDrawable(getActivity().getDrawable(R.drawable.overlay_seeker_bar));
+        else
+            hueBrightness.getProgressDrawable().setColorFilter(Color.BLUE, PorterDuff.Mode.SRC_IN);
+
         hueBrightness.setOnSeekBarChangeListener(seekbarListener);
 
 
@@ -244,7 +251,6 @@ public class LightFragment extends Fragment implements HueInterface{
 
         authDialogue = new AuthDialogue(getActivity(), LightFragment.this);
         authDialogue.open();
-
     }
 
     public void connectionComplete(){
@@ -310,17 +316,11 @@ public class LightFragment extends Fragment implements HueInterface{
                     lightState.setHue(theme.colors.get(i));
                     lightState.setBrightness(hueBrightness.getProgress());
                     phBridge.updateLightState(phLight, lightState, phLightListener);
-                    Thread.sleep(500);
                 }
-
-
-
         }catch(ArrayIndexOutOfBoundsException e) {
             Toast.makeText(getActivity(), "Oops! Too few lamps are reachable", Toast.LENGTH_LONG).show();
         }catch(NullPointerException e){
-
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            Toast.makeText(getActivity(), "No bridge connected - Reconnect to set light", Toast.LENGTH_SHORT).show();
         }
 
     }

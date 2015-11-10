@@ -244,6 +244,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             }
             lightFragment.updateHueBridge(bridge);
+            lightFragment.connectionComplete();
 
         }
         @Override
@@ -345,7 +346,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return super.onOptionsItemSelected(item);
     }
 
-
     /*
     NavBar eventhandler
      */
@@ -363,12 +363,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 lightFragment.setEnterTransition(new Slide(Gravity.RIGHT));
                 lightFragment.setExitTransition(new Slide(Gravity.LEFT));
             }
-            Bundle lightBundle = new Bundle();
-
             transactionFragment.replace(R.id.content_main, lightFragment).commit();
-
-
-
 
         } else if (id == R.id.nav_home) {
             // Sending data to home fragment fragment

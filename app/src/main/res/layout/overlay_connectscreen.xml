@@ -17,9 +17,10 @@
         android:layout_width="70dp"
         android:layout_height="50dp"
         android:text="No"
+        android:textColor="@android:color/white"
         android:layout_toEndOf="@+id/connect_overlay_text"
         android:layout_below="@+id/connect_overlay_text"
-        android:background="@android:color/darker_gray"
+        android:background="@color/gray"
         />
     
     <Button
@@ -28,8 +29,9 @@
         android:layout_height="50dp"
         android:text="Yes"
         android:layout_marginLeft="10dp"
+        android:textColor="@android:color/white"
         android:layout_toRightOf="@+id/connect_overlay_no_button"
         android:layout_below="@+id/connect_overlay_text"
-        android:background="@android:color/darker_gray"
+        android:background="@color/gray"
         />
 </RelativeLayout>

@@ -2,8 +2,12 @@ package jacks.paul.homescreen.widgets;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.Image;
+import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.Window;
@@ -12,6 +16,9 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import java.util.Date;
 import java.util.logging.SimpleFormatter;
@@ -30,6 +37,7 @@ public class AddDialogue extends Dialog {
     Dialog addWindow;
     EditText subjectLine;
     EditText contextText;
+    TextView importanceText;
     ImageButton addButton;
     ImageButton cancelButton;
     DatePicker datePicker;
@@ -40,8 +48,15 @@ public class AddDialogue extends Dialog {
     // Delegate/Interface
     public NoteInterface noteReceived = null;
 
+    // Typeface/Font
+    Typeface neouFat;
+    Typeface neou;
+
     public AddDialogue(final Context context) {
         super(context);
+
+        neouFat = Typeface.createFromAsset(context.getAssets(), "fonts/Neou-Bold.ttf");
+        neou = Typeface.createFromAsset(context.getAssets(), "fonts/Neou-Thin.ttf");
 
         data = new NoteData();
 
@@ -51,13 +66,18 @@ public class AddDialogue extends Dialog {
 
         subjectLine = (EditText) addWindow.findViewById(R.id.overlay_add_subject);
         contextText = (EditText) addWindow.findViewById(R.id.overlay_add_text);
+        importanceText = (TextView) addWindow.findViewById(R.id.overlay_text_importance);
         addButton = (ImageButton) addWindow.findViewById(R.id.overlay_add_button);
         cancelButton = (ImageButton)addWindow.findViewById(R.id.overlay_cancel_button);
         datePicker = (DatePicker)addWindow.findViewById(R.id.overlay_add_date);
         seeker = (SeekBar) addWindow.findViewById(R.id.overlay_add_importance);
 
-        seeker.setProgressDrawable(getContext().getDrawable(R.drawable.overlay_seeker_bar));
+        setFontStyles();
 
+        if(Build.VERSION.SDK_INT > 20)
+            seeker.setProgressDrawable(getContext().getDrawable(R.drawable.overlay_seeker_bar));
+        else
+            seeker.getProgressDrawable().setColorFilter(Color.BLUE, PorterDuff.Mode.SRC_IN);
 
         // Canceable.
         addWindow.setCancelable(false);
@@ -99,6 +119,14 @@ public class AddDialogue extends Dialog {
 
 
     }
+
+    private void setFontStyles() {
+        subjectLine.setTypeface(neouFat);
+        contextText.setTypeface(neouFat);
+        importanceText.setTypeface(neou
+
+    }
+
 
     public void show(){
         addWindow.show();

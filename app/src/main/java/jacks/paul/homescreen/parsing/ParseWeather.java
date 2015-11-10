@@ -50,7 +50,6 @@ public class ParseWeather {
             // Weather data
             NodeList weatherDataNodes = xmlDoc.getElementsByTagName("location");
 
-
             // Pulls weather data
             Node node = weatherDataNodes.item(0);
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
