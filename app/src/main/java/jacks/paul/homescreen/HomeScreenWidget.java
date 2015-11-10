@@ -63,8 +63,9 @@ public class HomeScreenWidget extends AppWidgetProvider {
 
         if (intent.getAction().equals(ONCLICK_ACTION)) {
             try {
-                Intent startMainApp = context.getPackageManager().getLaunchIntentForPackage("jacks.paul.homescreen");
+                Intent startMainApp = new Intent(context, MainActivity.class);
                 startMainApp.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startMainApp.addCategory(Intent.CATEGORY_LAUNCHER);
                 context.startActivity(startMainApp);
             }catch(ActivityNotFoundException e){
                 Toast.makeText(context,context.getPackageName(), Toast.LENGTH_SHORT).show();
