@@ -111,7 +111,7 @@ public class LightFragment extends Fragment implements HueInterface{
         neou = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Neou-Thin.ttf");
 
         hueTitle = (TextView)v.findViewById(R.id.hueTextDesc);
-        hueTitle.setText("Not connected");
+        hueTitle.setText("");
 
         hueProgressText = (TextView)v.findViewById(R.id.hue_gradient_text_progress);
         hueProgressText.setText("");
@@ -317,6 +317,7 @@ public class LightFragment extends Fragment implements HueInterface{
                     lightState.setBrightness(hueBrightness.getProgress());
                     phBridge.updateLightState(phLight, lightState, phLightListener);
                 }
+            hueTitle.setText("Hue Connected");
         }catch(ArrayIndexOutOfBoundsException e) {
             Toast.makeText(getActivity(), "Oops! Too few lamps are reachable", Toast.LENGTH_LONG).show();
         }catch(NullPointerException e){

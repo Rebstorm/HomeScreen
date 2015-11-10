@@ -123,7 +123,7 @@ public class AddDialogue extends Dialog {
     private void setFontStyles() {
         subjectLine.setTypeface(neouFat);
         contextText.setTypeface(neouFat);
-        importanceText.setTypeface(neou
+        importanceText.setTypeface(neou);
 
     }
 

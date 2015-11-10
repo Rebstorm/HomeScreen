@@ -244,7 +244,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             }
             lightFragment.updateHueBridge(bridge);
-            lightFragment.connectionComplete();
 
         }
         @Override
