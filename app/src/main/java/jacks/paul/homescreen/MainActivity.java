@@ -2,6 +2,8 @@ package jacks.paul.homescreen;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,10 +31,14 @@ import com.philips.lighting.model.PHBridge;
 import com.philips.lighting.model.PHHueError;
 import com.philips.lighting.model.PHHueParsingError;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import jacks.paul.homescreen.adapters.NotifyMainActivity;
-import jacks.paul.homescreen.db.NoteDatabase;
+import jacks.paul.homescreen.db.HomeDatabase;
 import jacks.paul.homescreen.download.DownloadInterface;
 import jacks.paul.homescreen.download.DownloadWeather;
 import jacks.paul.homescreen.fragments.HomeFragment;
@@ -43,11 +49,12 @@ import jacks.paul.homescreen.hue.PHWizardAlertDialog;
 import jacks.paul.homescreen.parsing.ParseWeather;
 import jacks.paul.homescreen.parsing.WeatherInterface;
 import jacks.paul.homescreen.types.TemperatureData;
-import jacks.paul.homescreen.widgets.AuthDialogue;
 import jacks.paul.homescreen.widgets.ConnectionDialog;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, DownloadInterface, WeatherInterface, NotifyMainActivity {
 
+
+    public static String WEATHER_SHARED_PREFS = "WeatherPrefs";
 
     //Hue
     private PHHueSDK phHueSDK;
@@ -63,8 +70,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // Temp vars
     TemperatureData data;
 
-    // Sqlite DB
-    public NoteDatabase noteDatabase;
 
     //Fragments
     LightFragment lightFragment;
@@ -72,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     WebFragment webFragment;
 
     //Fragment Manager
-    FragmentManager fragmentManager;
+    FragmentManager fragmentManager = getFragmentManager();
 
     //FABs
     FloatingActionButton fab;
@@ -100,7 +105,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         webFragment = new WebFragment();
 
         //Fragment manager
-        fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_main, homeFragment).commit();
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -120,10 +124,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         // HUE Setup
         setupHUE();
-
-
-
-
     }
 
     public void setupHUE(){
@@ -161,7 +161,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
     public void doBridgeSearch() {
-
         Toast.makeText(getApplicationContext(), "Searching for hue..", Toast.LENGTH_SHORT).show();
 
         PHBridgeSearchManager sm = (PHBridgeSearchManager) phHueSDK.getSDKService(PHHueSDK.SEARCH_BRIDGE);
@@ -171,9 +170,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     // Local SDK Listener
     private PHSDKListener listener = new PHSDKListener() {
-
-
-
         @Override
         public void onAccessPointsFound(List<PHAccessPoint> accessPoint) {
             // If bridges were found..
@@ -306,7 +302,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     };
 
-
     /*
     Back pressed-super method
      */
@@ -398,17 +393,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
-
-
     /*
-    *
     *        HOME FRAGMENT STUFF
     *      - Persistency for when switching fragments
-    *
-    *
-    *
-    *
-     */
+    */
 
 
     @Override
@@ -422,6 +410,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // For when parsing is finished, set it to the ui.
         homeFragment.changeUIData(data);
         this.data = data;
+
+        SharedPreferences sharedPreferences = this.getSharedPreferences("weatherPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.putString("temp", String.valueOf(data.temperature));
+        editor.putString("winddir", data.windDirection);
+        editor.putString("hum", data.humidity);
+        editor.putString("lastupdate", data.lastUpdated);
+        editor.putString("icon", data.weatherIcon.toString());
+        editor.commit();
+
     }
 
     @Override
@@ -430,5 +429,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         task.delegate = this;
         task.execute(xmlURL);
     }
+
 
 }

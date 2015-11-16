@@ -10,6 +10,7 @@ import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import jacks.paul.homescreen.fragments.HomeFragment;
+import jacks.paul.homescreen.fragments.LightFragment;
 
 /**
  * Implementation of App Widget functionality.
@@ -17,7 +18,9 @@ import jacks.paul.homescreen.fragments.HomeFragment;
 public class HomeScreenWidget extends AppWidgetProvider {
 
 
-    private static final String ONCLICK_ACTION = "OnClickAction";
+    private static final String ONCLICK_ACTION_ICON = "OnClickAction";
+    private static final String ONCLICK_ACTION_HUE = "OnClickActionHUE";
+
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
@@ -45,12 +48,19 @@ public class HomeScreenWidget extends AppWidgetProvider {
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_home);
 
-
-        // Intent for onclick
+        // Intent for onclick icon
         Intent intent = new Intent(context, HomeScreenWidget.class);
-        intent.setAction(ONCLICK_ACTION);
+        intent.setAction(ONCLICK_ACTION_ICON);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+
+        // Intent for onclick hue icon
+        Intent intentHue = new Intent(context, HomeScreenWidget.class);
+        intentHue.setAction(ONCLICK_ACTION_HUE);
+        PendingIntent pendingIntentHue = PendingIntent.getActivity(context, appWidgetId, LightFragment.createLaunchFragmentIntent(context), 0);
+
         views.setOnClickPendingIntent(R.id.widget_weather_image, pendingIntent);
+
+        views.setOnClickPendingIntent(R.id.hue_widget_icon, pendingIntentHue);
 
 
         // Instruct the widget manager to update the widget
@@ -61,9 +71,19 @@ public class HomeScreenWidget extends AppWidgetProvider {
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
 
-        if (intent.getAction().equals(ONCLICK_ACTION)) {
+        if (intent.getAction().equals(ONCLICK_ACTION_ICON)) {
             try {
                 Intent startMainApp = new Intent(context, MainActivity.class);
+                startMainApp.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startMainApp.addCategory(Intent.CATEGORY_LAUNCHER);
+                context.startActivity(startMainApp);
+            }catch(ActivityNotFoundException e){
+                Toast.makeText(context,context.getPackageName(), Toast.LENGTH_SHORT).show();
+            }
+
+        }else if(intent.getAction().equals(ONCLICK_ACTION_HUE)){
+            try{
+                Intent startMainApp = new Intent(context, LightFragment.class);
                 startMainApp.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startMainApp.addCategory(Intent.CATEGORY_LAUNCHER);
                 context.startActivity(startMainApp);

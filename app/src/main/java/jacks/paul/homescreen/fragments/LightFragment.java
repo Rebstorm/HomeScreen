@@ -1,5 +1,7 @@
 package jacks.paul.homescreen.fragments;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
@@ -115,8 +117,6 @@ public class LightFragment extends Fragment implements HueInterface{
 
         hueProgressText = (TextView)v.findViewById(R.id.hue_gradient_text_progress);
         hueProgressText.setText("");
-
-
 
         setFontStyles();
 
@@ -304,7 +304,6 @@ public class LightFragment extends Fragment implements HueInterface{
         public void onSearchComplete() {}
     };
 
-
     private void setTheme(HueData theme) {
         // For consistency with the ui
         try {
@@ -326,6 +325,7 @@ public class LightFragment extends Fragment implements HueInterface{
 
     }
 
-
-
+    public static Intent createLaunchFragmentIntent (Context c){
+        return new Intent(c, LightFragment.class).putExtra("Hello world", "Hello lightfrag");
+    }
 }

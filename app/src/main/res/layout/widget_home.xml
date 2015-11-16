@@ -1,63 +1,118 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent"
-    android:padding="@dimen/widget_margin" android:background="@color/gray">
+    android:padding="@dimen/widget_margin" android:background="@drawable/bg_widget">
 
 
     <RelativeLayout
-        android:id="@+id/icon_view"
-        android:layout_width="wrap_content"
-        android:layout_height="300dp">
-
-    <ImageView
-        android:layout_centerInParent="true"
-        android:id="@+id/widget_weather_image"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:background="@drawable/icon"
-        />
-
-    </RelativeLayout>
-
-    <ImageView
-        android:id="@+id/icon_divider"
-        android:layout_toEndOf="@+id/icon_view"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom="2dp"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-        android:paddingTop="2dp"
-        android:scaleType="fitXY"
-        android:src="?android:attr/listDivider" />
+        android:paddingLeft="20dp">
 
 
-
-    <RelativeLayout
-        android:id="@+id/task_view"
-        android:layout_toEndOf="@+id/icon_divider"
-        android:minWidth="200dp"
-        android:layout_width="wrap_content"
-        android:layout_height="300dp">
-
-        <TextView
-            android:id="@+id/chores_text"
+        <RelativeLayout
+            android:id="@+id/icon_view"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0"
-            android:textSize="80sp"
-            android:textColor="@android:color/white"
+            android:layout_height="400dp">
+
+        <ImageView
             android:layout_centerVertical="true"
-            android:layout_centerHorizontal="true" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/chores_text"
-            android:textColor="@color/white"
             android:layout_centerHorizontal="true"
-            android:text="chores"/>
+            android:id="@+id/widget_weather_image"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:background="@drawable/icon"
+            />
+
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/icon_divider"
+            android:layout_toEndOf="@+id/icon_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingBottom="2dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="2dp"
+            android:scaleType="fitXY"
+            android:src="?android:attr/listDivider" />
 
 
+
+        <RelativeLayout
+            android:id="@+id/task_view"
+            android:layout_toEndOf="@+id/icon_divider"
+            android:minWidth="200dp"
+            android:layout_width="wrap_content"
+            android:layout_height="400dp">
+
+            <TextView
+                android:id="@+id/chores_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textSize="140sp"
+                android:textColor="@android:color/white"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@id/chores_text"
+                android:textColor="@color/white"
+                android:layout_centerHorizontal="true"
+                android:text="tasks"/>
+
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/task_divider"
+            android:layout_toEndOf="@+id/task_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingBottom="2dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="2dp"
+            android:scaleType="fitXY"
+            android:src="?android:attr/listDivider" />
+
+
+        <RelativeLayout
+            android:id="@+id/hue_view"
+            android:layout_width="wrap_content"
+            android:layout_height="400dp"
+            android:minWidth="200dp"
+            android:layout_toEndOf="@+id/task_view" >
+
+
+            <ImageView
+                android:id="@+id/hue_widget_icon"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/widget_light"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Connect"
+                android:layout_above="@+id/hue_widget_icon"
+                android:layout_centerHorizontal="true"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                />
+
+
+
+
+
+
+
+
+        </RelativeLayout>
 
 
     </RelativeLayout>

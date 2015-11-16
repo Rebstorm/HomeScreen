@@ -10,21 +10,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jacks.paul.homescreen.types.NoteData;
+import jacks.paul.homescreen.types.TemperatureData;
 
 /**
  * Created by Paul on 19/10/2015.
  */
-public class NoteDatabase extends SQLiteOpenHelper {
+public class HomeDatabase extends SQLiteOpenHelper {
 
     // All Static variables
     // Database Version
     private static final int DATABASE_VERSION = 1;
     // Database Name
-    private static final String DATABASE_NAME = "NoteDatabase";
+    private static final String DATABASE_NAME = "HomeDatabase";
     // Database Table
     private  static final String NOTE_TABLE = "notes";
+    private static final String WEATHER_TABLE = "weather";
 
-    // Vars
+    // Vars Notes
     private static final String ID = "id";
     private static final String HEADER = "header";
     private static final String TEXT = "text";
@@ -34,7 +36,7 @@ public class NoteDatabase extends SQLiteOpenHelper {
     // DB
     SQLiteDatabase db;
 
-    public NoteDatabase(Context context) {
+    public HomeDatabase(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
 
         // Gets the DB in the Constructor
@@ -43,10 +45,12 @@ public class NoteDatabase extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String CREATE_TABLE = "CREATE TABLE " + NOTE_TABLE +
+        String CREATE_TABLE_NOTES = "CREATE TABLE " + NOTE_TABLE +
                 "(" + ID + " INTEGER PRIMARY KEY," + HEADER + " TEXT," +
                 TEXT + " TEXT," + DATE + " TEXT," + IMPORTANCE + " TEXT)";
-        db.execSQL(CREATE_TABLE);
+
+        db.execSQL(CREATE_TABLE_NOTES);
+
     }
 
     @Override
@@ -134,8 +138,9 @@ public class NoteDatabase extends SQLiteOpenHelper {
 
     // Remove
     public void removeNote(NoteData remove){
-        db.delete(NOTE_TABLE, ID +"=?", new String[]{String.valueOf(remove.id)});
+        db.delete(NOTE_TABLE, ID + "=?", new String[]{String.valueOf(remove.id)});
     }
+
 
 
 }

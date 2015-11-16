@@ -26,10 +26,11 @@ public class TemperatureData {
 
     }
 
+    public int id = 0;
     public double temperature = 0.0;
     public WeatherIcon weatherIcon = WeatherIcon.Thunderstorm;
     public String windDirection = "ERROR";
-    public String windSpeed = "N/A";
+    public String lastUpdated = "N/A";
     public String humidity = "ERROR";
 
 
