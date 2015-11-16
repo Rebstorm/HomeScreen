@@ -6,8 +6,10 @@ import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +17,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import jacks.paul.homescreen.R;
@@ -32,11 +35,16 @@ public class NoteButton extends RelativeLayout{
     private int width = 300;
     public NoteData data;
 
+    // Typeface/Font
+    Typeface neouFat;
+    Typeface neou;
+
     public NoteInterface buttonListener;
 
     Context context;
     Button noteButton;
     Button exitButton;
+    TextView subText;
 
     public NoteButton(Context context, NoteData data) {
         super(context);
@@ -45,17 +53,20 @@ public class NoteButton extends RelativeLayout{
         this.context = context;
         noteButton = new Button(context);
         exitButton = new Button(context);
+        subText = new Button(context);
+
+        neouFat = Typeface.createFromAsset(context.getAssets(), "fonts/Neou-Bold.ttf");
+        neou = Typeface.createFromAsset(context.getAssets(), "fonts/Neou-Thin.ttf");
+
         // Setup everything
         setupButton(data);
     }
 
     private void setupButton(final NoteData data){
 
-
-
         // Setting the design.
-        LinearLayout.LayoutParams buttonDesign = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT);
+        RelativeLayout.LayoutParams buttonDesign = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT);
         buttonDesign.setMargins(10,0,10,0);
 
         // Height and Width
@@ -69,10 +80,10 @@ public class NoteButton extends RelativeLayout{
         if(data.header != null)
             noteButton.setText(data.header);
         noteButton.setTextColor(Color.WHITE);
+        noteButton.setTypeface(neouFat);
+        noteButton.setTextSize(24);
 
-        // Transparency
-        //this.setAlpha((float) 0.25);
-        noteButton.setBackgroundColor(Color.TRANSPARENT);
+
         // Set imporance of note
         switch (data.importance){
             case Very:
@@ -93,10 +104,32 @@ public class NoteButton extends RelativeLayout{
             }
         });
 
+
+        RelativeLayout.LayoutParams subTextDesign = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT);
+        // Add below notebutton
+        subTextDesign.width = width;
+        subTextDesign.height = 250;
+        subTextDesign.setMargins(0,200,0,0);
+
+        if(data.text != null)
+            subText.setText(data.text);
+
+        // Layout
+        subText.setPadding(15,0,15,0);
+        subText.setBackgroundColor(Color.TRANSPARENT);
+        subText.setGravity(Gravity.TOP | Gravity.CENTER);
+        subText.setTextColor(Color.GRAY);
+        subText.setTypeface(neouFat);
+        subText.setTextSize(18);
+        subText.setLayoutParams(subTextDesign);
+
+
         exitButton.setBackgroundResource(R.drawable.note_exit);
 
         RelativeLayout.LayoutParams exitButtonDesign = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
                 RelativeLayout.LayoutParams.MATCH_PARENT);
+
         exitButtonDesign.setMargins(250,10,0,0);
         exitButtonDesign.width = 60;
         exitButtonDesign.height = 60;
@@ -121,6 +154,7 @@ public class NoteButton extends RelativeLayout{
         });
 
         this.addView(noteButton);
+        this.addView(subText);
         this.addView(exitButton);
     }
 

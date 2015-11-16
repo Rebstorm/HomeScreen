@@ -16,7 +16,6 @@ public class NoteData {
     public int id = 0;
     public String header = "";
     public String text = "";
-    public Date expiryDate;
     public Importance importance = Importance.Low;
 
 

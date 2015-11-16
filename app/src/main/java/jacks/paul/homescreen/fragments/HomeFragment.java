@@ -262,16 +262,14 @@ public class HomeFragment extends Fragment implements NoteInterface{
             previousData.humidity = preferences.getString("hum", null);
             previousData.windDirection = preferences.getString("winddir", null);
             previousData.weatherIcon = TemperatureData.WeatherIcon.valueOf(preferences.getString("icon", null));
-
             changeUIData(previousData);
 
             // We dont need to update this, as it'll be done automatically.
-            ranPreviously = true
-            ;
+            ranPreviously = true;
         }
-        else
+        else {
             ranPreviously = false;
-
+        }
     }
 
 
@@ -284,8 +282,10 @@ public class HomeFragment extends Fragment implements NoteInterface{
             isNight = true;
         else
             isNight = false;
+
         // UI update
-        dateText.setText("Last updated: " + dateNow.format(currentTime));
+        if(!ranPreviously)
+            dateText.setText("Last updated: " + dateNow.format(currentTime));
     }
 
     // Sets weather icon

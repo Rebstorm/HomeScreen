@@ -40,7 +40,6 @@ public class AddDialogue extends Dialog {
     TextView importanceText;
     ImageButton addButton;
     ImageButton cancelButton;
-    DatePicker datePicker;
     SeekBar seeker;
 
     NoteData data;
@@ -69,7 +68,6 @@ public class AddDialogue extends Dialog {
         importanceText = (TextView) addWindow.findViewById(R.id.overlay_text_importance);
         addButton = (ImageButton) addWindow.findViewById(R.id.overlay_add_button);
         cancelButton = (ImageButton)addWindow.findViewById(R.id.overlay_cancel_button);
-        datePicker = (DatePicker)addWindow.findViewById(R.id.overlay_add_date);
         seeker = (SeekBar) addWindow.findViewById(R.id.overlay_add_importance);
 
         setFontStyles();
@@ -90,7 +88,6 @@ public class AddDialogue extends Dialog {
                 data.text = contextText.getText().toString();
 
                 data.header = subjectLine.getText().toString();
-                data.expiryDate = new Date(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
 
                 if (seeker.getProgress() < 30) {
                     data.importance = NoteData.Importance.Low;

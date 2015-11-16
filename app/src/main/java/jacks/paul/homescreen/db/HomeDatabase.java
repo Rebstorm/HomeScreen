@@ -64,7 +64,6 @@ public class HomeDatabase extends SQLiteOpenHelper {
         ContentValues contentValues = new ContentValues();
         contentValues.put(HEADER, data.header);
         contentValues.put(TEXT, data.text);
-        contentValues.put(DATE, data.expiryDate.toString());
 
         // Convert enum to int
         if(data.importance == NoteData.Importance.Very)
