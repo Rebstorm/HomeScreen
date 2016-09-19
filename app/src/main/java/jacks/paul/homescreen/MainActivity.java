@@ -8,17 +8,17 @@ import android.content.res.ColorStateList;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.content.ContextCompat;
-import android.transition.Slide;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.View;
 import android.support.design.widget.NavigationView;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.transition.Slide;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
@@ -31,14 +31,9 @@ import com.philips.lighting.model.PHBridge;
 import com.philips.lighting.model.PHHueError;
 import com.philips.lighting.model.PHHueParsingError;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import jacks.paul.homescreen.adapters.NotifyMainActivity;
-import jacks.paul.homescreen.db.HomeDatabase;
 import jacks.paul.homescreen.download.DownloadInterface;
 import jacks.paul.homescreen.download.DownloadWeather;
 import jacks.paul.homescreen.fragments.HomeFragment;
@@ -64,7 +59,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private List<PHAccessPoint> bridgeList;
     PHBridge phBridge;
 
-    // Delegates
     public ParseWeather xml = new ParseWeather();
 
     // Temp vars
@@ -357,6 +351,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 lightFragment.setEnterTransition(new Slide(Gravity.RIGHT));
                 lightFragment.setExitTransition(new Slide(Gravity.LEFT));
             }
+            homeFragment.isFragmentVisible = false;
             transactionFragment.replace(R.id.content_main, lightFragment).commit();
 
         } else if (id == R.id.nav_home) {
@@ -378,14 +373,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 homeFragment.setEnterTransition(new Slide(Gravity.RIGHT));
                 homeFragment.setExitTransition(new Slide(Gravity.LEFT));
             }
+            homeFragment.isFragmentVisible = true;
             transactionFragment.replace(R.id.content_main, homeFragment).commit();
 
         } else if (id == R.id.nav_web) {
+            homeFragment.isFragmentVisible = false;
             fragmentManager.beginTransaction().replace(R.id.content_main, webFragment).commit();
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

@@ -21,7 +21,9 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.sql.Time;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -71,10 +73,11 @@ public class HomeFragment extends Fragment implements NoteInterface{
     AnimationSet animation;
 
     // Timer & Auto refresh
-    Timer weatherTimer;
+    Timer weatherTimer = new Timer();
 
     //isitNight?
     Boolean isNight;
+    public Boolean isFragmentVisible = true;
 
     // Using persistent data
     boolean ranPreviously = true;
@@ -160,21 +163,30 @@ public class HomeFragment extends Fragment implements NoteInterface{
             }
         });
 
-        // Timer that updates automatically every hour.
-        weatherTimer = new Timer();
-        weatherTimer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        getDate();
-                        weatherUpdate();
-                    }
-                });
-                // 1 hr in ms.
-            }// 3600000 ms = 1 hr
-        }, 0, 3600000);
+        // Timer that updates automatically every hour
+
+
+        try {
+            weatherTimer.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    if (isFragmentVisible) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                getDate();
+                                weatherUpdate();
+                            }
+                        });
+                        // 1 hr in ms.3600000
+                    }// 3600000 ms = 1 hr
+                }
+            }, 0, 3600000);
+
+        } catch (Exception e) {
+            Toast.makeText(getActivity(), "Error updating the weather:" + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
         rebuildNotes();
 
         // If data exists.
@@ -233,18 +245,13 @@ public class HomeFragment extends Fragment implements NoteInterface{
         animation.addAnimation(fadeOut);
         animation.setAnimationListener(new Animation.AnimationListener() {
             @Override
-            public void onAnimationStart(Animation animation) {
-
-            }
+            public void onAnimationStart(Animation animation) { }
             @Override
             public void onAnimationEnd(Animation animation) {
                 homeText.startAnimation(animation);
             }
-
             @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
+            public void onAnimationRepeat(Animation animation) { }
         });
         homeText.startAnimation(animation);
         weatherImg.startAnimation(animation);

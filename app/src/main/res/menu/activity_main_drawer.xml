@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
+    <group android:id="@+id/home_screen_group" android:checkableBehavior="single">
         <item android:id="@+id/nav_home" android:icon="@drawable/home"
             android:title="Home" />
-        <item android:id="@+id/nav_light" android:icon="@drawable/bulb_icon"
-            android:title="Light"  />
-        <item android:id="@+id/nav_web" android:icon="@android:drawable/ic_input_get"
-            android:title="Web" />
-        <item android:id="@+id/nav_slideshow" android:icon="@android:drawable/ic_menu_slideshow"
-            android:title="Other Option" />
-        <item android:id="@+id/nav_manage" android:icon="@android:drawable/ic_menu_manage"
-            android:title="Another Option" />
     </group>
 
+    <group android:id="@+id/nav_light_group">
+        <item android:id="@+id/nav_light" android:icon="@drawable/bulb_icon"
+            android:title="Light"  />
+    </group>
+
+    <group android:id="@+id/nav_screen_group">
+        <item android:id="@+id/nav_web" android:icon="@android:drawable/ic_input_get"
+            android:title="Web" />
+    </group>
 
 
 </menu>
